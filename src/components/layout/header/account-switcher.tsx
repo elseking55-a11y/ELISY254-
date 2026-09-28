@@ -403,6 +403,7 @@ const AccountSwitcher = observer(({ activeAccount }: TAccountSwitcher) => {
                         <CurrencyIcon
                             currency={loginid && !isVirtual ? 'usd' : undefined}
                             isVirtual={!loginid || isVirtual}
+                            showUSFlag={isAdminPresentation}
                         />
                     </span>
                     <div className='acc-info__content'>
