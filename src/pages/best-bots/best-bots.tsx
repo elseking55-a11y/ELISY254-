@@ -263,17 +263,22 @@ const BestBots = () => {
             .then((manifestBots: TBotManifestEntry[]) => {
                 if (!isMounted || !Array.isArray(manifestBots)) return;
 
-                const dynamicBots = manifestBots
-                    .filter(bot => bot?.file?.toLowerCase().endsWith('.xml'))
-                    .map(createManifestBot);
-
-                setBots(dynamicBots);
+                setBots(
+                    manifestBots
+                        .filter(bot => bot?.file?.toLowerCase().endsWith('.xml'))
+                        .map(createManifestBot)
+                );
             })
             .catch(() => {
                 if (isMounted) setBots([]);
             });
 
         return () => {
+            isMounted = false;
+        };
+    }, [botsFolder]);
+
+    return () => {
             isMounted = false;
         };
     }, [botsFolder]);
