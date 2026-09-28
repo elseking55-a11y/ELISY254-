@@ -338,6 +338,23 @@ const createHostedDomainEntries = ({
 };
 
 export const DOMAIN_CONFIG: Record<string, DomainConfig> = {
+    // ELISY254 production domain. Keep the OAuth redirect URI identical to the
+    // URL registered in the Deriv OAuth application. Credentials come from
+    // deployment environment variables so they are never hard-coded here.
+    ...createHostedDomainEntries({
+        primaryDomain: 'www.elisy.site',
+        aliases: ['elisy.site'],
+        clientId: process.env.CLIENT_ID || '',
+        appId: process.env.APP_ID || '',
+        redirectUri: process.env.REDIRECT_URI || 'https://www.elisy.site/callback',
+        botsFolder: 'optimumtraders.site',
+        includeLegacyAppIdInOAuth: true,
+        useLegacyOAuthLogin: false,
+        ui: {
+            ...DEFAULT_DOMAIN_UI,
+            brandName: 'ELISY254',
+        },
+    }),
     // ── Template for adding a new domain ─────────────────────────────────────
     // Copy one of the blocks below and adjust. Standard fields to fill in for
     // every new site:
