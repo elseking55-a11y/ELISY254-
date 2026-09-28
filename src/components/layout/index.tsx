@@ -6,7 +6,6 @@ import { api_base } from '@/external/bot-skeleton';
 import { useStore } from '@/hooks/useStore';
 import { useDevice } from '@deriv-com/ui';
 import { crypto_currencies_display_order, fiat_currencies_display_order, getDomainConfig } from '../shared';
-import CommunityBanner from '../community-banner/community-banner';
 import Footer from './footer';
 import AppHeader from './header';
 import Body from './main-body';
@@ -179,15 +178,6 @@ const Layout = observer(() => {
             })}
         >
             <div ref={chromeRef}>
-                {!isCallbackPage && (
-                    <CommunityBanner
-                        whatsapp={domain_config.ui.socialLinks?.whatsapp}
-                        telegram={domain_config.ui.socialLinks?.telegram}
-                        brandName={domain_config.ui.brandName}
-                        variant='ticker'
-                        dismissible
-                    />
-                )}
                 {!isCallbackPage && <AppHeader isAuthenticating={isAuthenticating || !isInitialAuthCheckComplete} />}
             </div>
             <Body>
