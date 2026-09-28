@@ -807,14 +807,6 @@ const AppWrapper = observer(() => {
                     </div>
                 )}
             </DesktopWrapper>
-            <button
-                type='button'
-                className='main__global-run-bot'
-                onClick={() => run_panel.toggleDrawer(true)}
-                aria-label='Open Run Bot controls'
-            >
-                <span>▶</span> Run Bot
-            </button>
             <MobileWrapper>
                 {should_show_run_panel && !is_open && <RunPanel />}
             </MobileWrapper>
