@@ -40,7 +40,7 @@
 
     &__grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(24rem, 1fr));
+        grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: 2rem 1.8rem;
         width: 100%;
         margin: 0 auto;
@@ -441,3 +441,4 @@
         text-decoration: none;
     }
 }
+\n@media (max-width: 430px) {\n    .best-bots__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }\n    .bb-card { padding: 1.15rem 1rem 1rem; gap: .8rem; border-radius: 1.2rem; }\n    .bb-card__desc { min-height: 4.8rem; font-size: 1.05rem; }\n    .bb-card__name { font-size: 1.55rem; }\n    .bb-card__actions { flex-direction: column; align-items: stretch; }\n    .bb-card__guide, .bb-card__btn { width: 100%; min-width: 0; }\n}\n
