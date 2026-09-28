@@ -42,6 +42,9 @@ export const useLogout = () => {
                     ErrorLogger.error('Logout', 'Failed to clear all storage', finalError);
                 }
             }
+        } finally {
+            // A logout always returns to the public landing page.
+            window.location.replace('/');
         }
     }, [client]);
 };
