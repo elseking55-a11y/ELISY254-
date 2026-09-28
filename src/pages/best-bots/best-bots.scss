@@ -441,4 +441,12 @@
         text-decoration: none;
     }
 }
-\n@media (max-width: 430px) {\n    .best-bots__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }\n    .bb-card { padding: 1.15rem 1rem 1rem; gap: .8rem; border-radius: 1.2rem; }\n    .bb-card__desc { min-height: 4.8rem; font-size: 1.05rem; }\n    .bb-card__name { font-size: 1.55rem; }\n    .bb-card__actions { flex-direction: column; align-items: stretch; }\n    .bb-card__guide, .bb-card__btn { width: 100%; min-width: 0; }\n}\n
+
+@media (max-width: 430px) {
+    .best-bots__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+    .bb-card { padding: 1.15rem 1rem 1rem; gap: .8rem; border-radius: 1.2rem; }
+    .bb-card__desc { min-height: 4.8rem; font-size: 1.05rem; }
+    .bb-card__name { font-size: 1.55rem; }
+    .bb-card__actions { flex-direction: column; align-items: stretch; }
+    .bb-card__guide, .bb-card__btn { width: 100%; min-width: 0; }
+}
