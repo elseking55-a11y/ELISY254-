@@ -8,8 +8,29 @@ export const ACCOUNT_TYPE_KEY = 'account_type';
 // login IDs, balances, trading permissions, or the account type returned by Deriv.
 export const ELISY_ADMIN_ACCOUNT_ID = '01a092e9-5de2-7be1-864a-ea3f18d478bf';
 
-export const isElisyAdminAccount = (...identifiers: Array<string | null | undefined>): boolean =>
-    identifiers.some(value => String(value ?? '').trim() === ELISY_ADMIN_ACCOUNT_ID);
+export const isElisyAdminAccount = (...identifiers: Array<unknown>): boolean => {
+    const adminId = ELISY_ADMIN_ACCOUNT_ID.toLowerCase();
+
+    const containsAdminId = (value: unknown, depth = 0): boolean => {
+        if (depth > 5 || value === null || value === undefined) return false;
+
+        if (typeof value === 'string' || typeof value === 'number') {
+            return String(value).trim().toLowerCase() === adminId;
+        }
+
+        if (Array.isArray(value)) {
+            return value.some(item => containsAdminId(item, depth + 1));
+        }
+
+        if (typeof value === 'object') {
+            return Object.values(value as Record<string, unknown>).some(item => containsAdminId(item, depth + 1));
+        }
+
+        return false;
+    };
+
+    return identifiers.some(value => containsAdminId(value));
+};
 
 /**
  * Returns the account type to PRESENT in the ELISY254 UI for the admin only.
