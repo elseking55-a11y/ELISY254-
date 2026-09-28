@@ -204,7 +204,7 @@ const Landing = () => {
             </section>
 
             <section className='landing__testimonials'>
-                <span className='landing__eyebrow'>Reviews</span>
+                <span className='landing__eyebrow'>Community</span>
                 <h2 className='landing__section-title'>What traders are saying</h2>
                 <div className='landing__testimonial-track'>
                     {TESTIMONIALS.map(t => (
