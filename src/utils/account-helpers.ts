@@ -36,10 +36,36 @@ export const isElisyAdminAccount = (...identifiers: Array<unknown>): boolean => 
  * Returns the account type to PRESENT in the ELISY254 UI for the admin only.
  * The underlying Deriv account type must always continue using isDemoAccount().
  */
-export const getPresentationIsVirtual = (loginid?: string, adminPresentation = false): boolean => {
+export type TAdminPresentationMode = 'demo' | 'real';
+export const ADMIN_PRESENTATION_MODE_KEY = 'elisy_admin_presentation_mode';
+export const ADMIN_PRESENTATION_EVENT = 'elisy-admin-presentation-change';
+
+export const getAdminPresentationMode = (loginid?: string): TAdminPresentationMode => {
+    if (typeof window !== 'undefined') {
+        const saved = localStorage.getItem(ADMIN_PRESENTATION_MODE_KEY);
+        if (saved === 'demo' || saved === 'real') return saved;
+    }
+
+    // Preserve the existing admin behavior on first use: present the
+    // currently active Deriv account as the opposite account type.
+    return isDemoAccount(loginid || '') ? 'real' : 'demo';
+};
+
+export const setAdminPresentationMode = (mode: TAdminPresentationMode): void => {
+    if (typeof window === 'undefined') return;
+    localStorage.setItem(ADMIN_PRESENTATION_MODE_KEY, mode);
+    window.dispatchEvent(new CustomEvent(ADMIN_PRESENTATION_EVENT, { detail: mode }));
+};
+
+export const getPresentationIsVirtual = (
+    loginid?: string,
+    adminPresentation = false,
+    presentationMode?: TAdminPresentationMode
+): boolean => {
     if (!loginid) return false;
     const actualIsVirtual = isDemoAccount(loginid);
-    return adminPresentation ? !actualIsVirtual : actualIsVirtual;
+    if (!adminPresentation) return actualIsVirtual;
+    return (presentationMode || getAdminPresentationMode(loginid)) === 'demo';
 };
 
 /**
