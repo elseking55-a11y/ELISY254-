@@ -4,7 +4,7 @@
   "description": "Backend API for Deriv Trading Bot Platform",
   "main": "server/index.js",
   "engines": {
-    "node": ">=20.0.0 <22.0.0"
+    "node": ">=20.0.0 <23.0.0"
   },
   "scripts": {
     "start": "node server/index.js",
