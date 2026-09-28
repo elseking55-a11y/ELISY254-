@@ -75,29 +75,81 @@ const AccountSwitcher = observer(({ activeAccount }: TAccountSwitcher) => {
     }, []);
 
     const authRecord = (authData && typeof authData === 'object' ? authData : {}) as Record<string, unknown>;
-    const storedAccountNumber =
+
+    // The new Deriv profile identifier is not the same thing as the trading
+    // loginid. It may be present in auth/profile/account objects or in browser
+    // storage, so inspect those identity sources without changing the actual
+    // Deriv account object used for trading.
+    const storedIdentityValues: unknown[] =
         typeof window !== 'undefined'
-            ? localStorage.getItem('account_number') || localStorage.getItem('account_id')
-            : null;
+            ? (() => {
+                  const values: unknown[] = [];
+                  for (let i = 0; i < window.localStorage.length; i += 1) {
+                      const key = window.localStorage.key(i);
+                      if (!key) continue;
+                      const value = window.localStorage.getItem(key);
+                      if (value) values.push(value);
+                  }
+                  for (let i = 0; i < window.sessionStorage.length; i += 1) {
+                      const key = window.sessionStorage.key(i);
+                      if (!key) continue;
+                      const value = window.sessionStorage.getItem(key);
+                      if (value) values.push(value);
+                  }
+                  return values.map(value => {
+                      try {
+                          return JSON.parse(value);
+                      } catch {
+                          return value;
+                      }
+                  });
+              })()
+            : [];
+
     const adminIdentity = [
         activeLoginid,
-        storedAccountNumber,
         authRecord.account_id,
         authRecord.account_number,
         authRecord.accountNumber,
+        authRecord.accountId,
         authRecord.id,
+        authRecord.user_id,
+        authRecord.userId,
+        authRecord.profile_id,
+        authRecord.profileId,
+        authRecord.uuid,
+        authRecord.user_uuid,
+        authRecord.profile,
+        authRecord.account,
+        storedIdentityValues,
     ];
-    const isAdminPresentation = isElisyAdminAccount(...adminIdentity);
+
+    const directAdminIdentity = isElisyAdminAccount(...adminIdentity);
+    const persistedAdminLoginid =
+        typeof window !== 'undefined' ? localStorage.getItem('elisy_admin_presentation_loginid') : null;
+    const isPersistedAdminPresentation =
+        !directAdminIdentity &&
+        Boolean(activeLoginid) &&
+        persistedAdminLoginid === activeLoginid;
+
+    const isAdminPresentation = directAdminIdentity || isPersistedAdminPresentation;
 
     useEffect(() => {
         if (!activeAccount) return;
 
-        setActiveDropdownTab(getPresentationIsVirtual(activeAccount.loginid, isAdminPresentation) ? 'demo' : 'real');
+        const presentationIsVirtual = getPresentationIsVirtual(activeAccount.loginid, isAdminPresentation);
+        setActiveDropdownTab(presentationIsVirtual ? 'demo' : 'real');
 
-        if (isAdminPresentation && typeof window !== 'undefined') {
-            localStorage.setItem('elisy_admin_presentation', '1');
+        if (typeof window !== 'undefined') {
+            if (directAdminIdentity && activeLoginid) {
+                localStorage.setItem('elisy_admin_presentation', '1');
+                localStorage.setItem('elisy_admin_presentation_loginid', activeLoginid);
+            } else if (!isAdminPresentation) {
+                localStorage.removeItem('elisy_admin_presentation');
+                localStorage.removeItem('elisy_admin_presentation_loginid');
+            }
         }
-    }, [activeAccount?.isVirtual, activeAccount?.loginid, isAdminPresentation]);
+    }, [activeAccount?.loginid, activeLoginid, directAdminIdentity, isAdminPresentation]);
 
     const toggleDropdown = useCallback(() => {
         if (is_bot_running || isSingleAccount) return;
