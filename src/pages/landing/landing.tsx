@@ -60,51 +60,6 @@ const BOT_PREVIEWS = [
 // Interim testimonial copy — appreciation-toned, no specific profit/return
 // claims (kept vague on purpose for compliance reasons). Swap each entry for
 // a real quote as they come in from Telegram/WhatsApp.
-const TESTIMONIALS = [
-    {
-        initials: 'JK',
-        quote: 'The bot builder is so much easier than I expected. I set up my first strategy in one evening and it just runs in the background now.',
-        name: 'James K.',
-        role: 'Nairobi',
-        rating: 5,
-    },
-    {
-        initials: 'AM',
-        quote: 'What I like most is how clean the dashboard is. I can see exactly what my bots are doing without digging through menus.',
-        name: 'Amina M.',
-        role: 'Mombasa',
-        rating: 5,
-    },
-    {
-        initials: 'DO',
-        quote: 'Support actually responds fast when I have a question. That alone makes it worth sticking with this platform.',
-        name: 'David O.',
-        role: 'Kisumu',
-        rating: 5,
-    },
-    {
-        initials: 'FW',
-        quote: 'Switching between my accounts used to be a hassle. Now everything is in one place and I can check all my bots at a glance.',
-        name: 'Faith W.',
-        role: 'Eldoret',
-        rating: 5,
-    },
-    {
-        initials: 'SM',
-        quote: 'I appreciate that the platform is straightforward. No clutter, no confusing settings, just what I need to run my strategies.',
-        name: 'Samuel M.',
-        role: 'Nakuru',
-        rating: 5,
-    },
-    {
-        initials: 'GN',
-        quote: 'Been using this for a few months now and it has been reliable. Uptime is good and I rarely run into issues.',
-        name: 'Grace N.',
-        role: 'Kisii',
-        rating: 5,
-    },
-];
-
 const Landing = () => {
     const domain_config = getDomainConfig();
     const signup_url = getDerivSignupUrl();
@@ -195,27 +150,7 @@ const Landing = () => {
                 </div>
             </section>
 
-            <section className='landing__testimonials'>
-                <span className='landing__eyebrow'>Community</span>
-                <h2 className='landing__section-title'>What traders are saying</h2>
-                <div className='landing__testimonial-track'>
-                    {TESTIMONIALS.map(t => (
-                        <div className='landing__testimonial-card' key={t.name}>
-                            <span className='landing__testimonial-avatar'>{t.initials}</span>
-                            <p className='landing__testimonial-quote'>&ldquo;{t.quote}&rdquo;</p>
-                            <p className='landing__testimonial-name'>{t.name}</p>
-                            <p className='landing__testimonial-role'>{t.role}</p>
-                            <div className='landing__testimonial-stars' aria-label={`${t.rating} out of 5 stars`}>
-                                {Array.from({ length: 5 }).map((_, i) => (
-                                    <span key={i} className={i < t.rating ? 'is-filled' : ''}>
-                                        ★
-                                    </span>
-                                ))}
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </section>
+
 
             <section className='landing__steps'>
                 <span className='landing__eyebrow'>Getting started</span>
