@@ -51,6 +51,8 @@ const createLoaderConfig = (
 });
 
 export const domainLoaderConfig: Record<string, DomainLoaderConfig> = {
+    'elisy.site': createLoaderConfig('elisy.site', 'ELISY254', LOCALHOST_LOADER_COLORS, 'ELISY254 Trading Platform'),
+    'www.elisy.site': createLoaderConfig('www.elisy.site', 'ELISY254', LOCALHOST_LOADER_COLORS, 'ELISY254 Trading Platform'),
     'riskmanagers.site': createLoaderConfig(
         'riskmanagers.site',
         'Risk Managers',
@@ -169,17 +171,17 @@ export const domainLoaderConfig: Record<string, DomainLoaderConfig> = {
 };
 
 export const defaultLoaderConfig: DomainLoaderConfig = {
-    siteName: 'Trading Platform',
+    siteName: 'ELISY254',
     domain: typeof window !== 'undefined' ? window.location.hostname : 'unknown',
-    welcomeText: 'Welcome to Trading Platform',
-    subtitle: 'Preparing your trading experience',
+    welcomeText: 'Welcome to ELISY254',
+    subtitle: 'ELISY254 Trading Platform',
     logo: undefined,
     primaryColor: '#00d4ff',
     secondaryColor: '#7c3aed',
     accentColor: '#ffffff',
     backgroundColor: '#020617',
-    loaderText: 'Initializing application',
-    footerText: 'Secure Trading Environment',
+    loaderText: 'Loading ELISY254',
+    footerText: 'ELISY254',
     fallingSymbols: ['$', '\u20AC', '\u00A3'],
     duration: 6000,
     messages: DEFAULT_MESSAGES,
