@@ -648,8 +648,6 @@ const BotCard = observer(({ bot, accent }: { bot: TBot; accent: 'gold' | 'silver
                 </div>
 
                 <h3 className='bb-card__name'>{bot.name}</h3>
-                <p className='bb-card__desc'>Ready to load into Bot Builder.</p>
-
                 <div className='bb-card__actions'>
                     {guideUrl ? (
                         <button
