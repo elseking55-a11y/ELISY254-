@@ -7,12 +7,7 @@ import Text from '@/components/shared_ui/text';
 import { api_base } from '@/external/bot-skeleton/services/api/api-base';
 import { useApiBase } from '@/hooks/useApiBase';
 import { useStore } from '@/hooks/useStore';
-import {
-    getPresentationIsVirtual,
-    isDemoAccount,
-    isElisyAdminAccount,
-    shouldShowUsdAccountIcon,
-} from '@/utils/account-helpers';
+import { getPresentationIsVirtual, isDemoAccount, isElisyAdminAccount } from '@/utils/account-helpers';
 import {
     DISPLAY_CURRENCIES,
     formatDisplayBalanceValue,
@@ -48,7 +43,7 @@ const AccountSwitcher = observer(({ activeAccount }: TAccountSwitcher) => {
     const [activeDropdownTab, setActiveDropdownTab] = useState<'real' | 'demo'>('real');
     const [expandedGroups, setExpandedGroups] = useState(DEFAULT_GROUP_EXPANDED_STATE);
     const wrapperRef = useRef<HTMLDivElement>(null);
-    const { accountList, activeLoginid } = useApiBase();
+    const { accountList, activeLoginid, authData } = useApiBase();
     const { client, run_panel } = useStore() ?? {};
 
     const [resetAmount, setResetAmount] = useState<string>('');
@@ -79,11 +74,30 @@ const AccountSwitcher = observer(({ activeAccount }: TAccountSwitcher) => {
         };
     }, []);
 
+    const authRecord = (authData && typeof authData === 'object' ? authData : {}) as Record<string, unknown>;
+    const storedAccountNumber =
+        typeof window !== 'undefined'
+            ? localStorage.getItem('account_number') || localStorage.getItem('account_id')
+            : null;
+    const adminIdentity = [
+        activeLoginid,
+        storedAccountNumber,
+        authRecord.account_id,
+        authRecord.account_number,
+        authRecord.accountNumber,
+        authRecord.id,
+    ];
+    const isAdminPresentation = isElisyAdminAccount(...adminIdentity);
+
     useEffect(() => {
         if (!activeAccount) return;
 
-        setActiveDropdownTab(getPresentationIsVirtual(activeAccount.loginid) ? 'demo' : 'real');
-    }, [activeAccount?.isVirtual, activeAccount?.loginid]);
+        setActiveDropdownTab(getPresentationIsVirtual(activeAccount.loginid, isAdminPresentation) ? 'demo' : 'real');
+
+        if (isAdminPresentation && typeof window !== 'undefined') {
+            localStorage.setItem('elisy_admin_presentation', '1');
+        }
+    }, [activeAccount?.isVirtual, activeAccount?.loginid, isAdminPresentation]);
 
     const toggleDropdown = useCallback(() => {
         if (is_bot_running || isSingleAccount) return;
@@ -134,17 +148,14 @@ const AccountSwitcher = observer(({ activeAccount }: TAccountSwitcher) => {
                 loginid: account.loginid,
                 currency: account.currency,
                 balance: addComma(Number(account.balance ?? 0).toFixed(getDecimalPlaces(account.currency))),
-                isVirtual: getPresentationIsVirtual(account.loginid),
+                isVirtual: getPresentationIsVirtual(account.loginid, isAdminPresentation),
                 isActive: account.loginid === activeLoginid,
             }))
             .sort((a, b) => (a.isActive ? -1 : b.isActive ? 1 : 0));
-    }, [accountList, activeLoginid]);
+    }, [accountList, activeLoginid, isAdminPresentation]);
 
     const currency = activeAccount?.currency;
-    const actualIsVirtual = activeAccount?.isVirtual ?? false;
-    void actualIsVirtual;
-    const isAdminPresentation = isElisyAdminAccount(activeAccount?.loginid);
-    const isVirtual = getPresentationIsVirtual(activeAccount?.loginid);
+    const isVirtual = getPresentationIsVirtual(activeAccount?.loginid, isAdminPresentation);
     const balance = activeAccount?.balance;
     const loginid = activeAccount?.loginid;
     const showChevron = !isSingleAccount && !is_bot_running;
@@ -492,12 +503,6 @@ const AccountSwitcher = observer(({ activeAccount }: TAccountSwitcher) => {
                     )}
                     {activeDropdownTab === 'demo' && demoAccounts.length === 0 && (
                         <div className='acc-dropdown__empty'>No demo accounts available.</div>
-                    )}
-
-                    {isAdminPresentation && (
-                        <div className='acc-dropdown__admin-presentation' role='status'>
-                            Admin presentation: labels and icons are swapped only for this account. Deriv account data and trading state are unchanged.
-                        </div>
                     )}
 
                     {/* Demo reset section */}
