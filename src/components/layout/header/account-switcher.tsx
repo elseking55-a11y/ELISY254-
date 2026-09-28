@@ -127,6 +127,8 @@ const AccountSwitcher = observer(({ activeAccount }: TAccountSwitcher) => {
     const directAdminIdentity = isElisyAdminAccount(...adminIdentity);
     const persistedAdminLoginid =
         typeof window !== 'undefined' ? localStorage.getItem('elisy_admin_presentation_loginid') : null;
+    // Keep the admin presentation sticky for the exact Deriv account that
+    // was verified earlier. Never use the flag by itself across accounts.
     const isPersistedAdminPresentation =
         !directAdminIdentity &&
         Boolean(activeLoginid) &&
@@ -196,13 +198,25 @@ const AccountSwitcher = observer(({ activeAccount }: TAccountSwitcher) => {
     const formattedAccounts = useMemo(() => {
         if (!accountList) return [];
         return accountList
-            .map(account => ({
-                loginid: account.loginid,
-                currency: account.currency,
-                balance: addComma(Number(account.balance ?? 0).toFixed(getDecimalPlaces(account.currency))),
-                isVirtual: getPresentationIsVirtual(account.loginid, isAdminPresentation),
-                isActive: account.loginid === activeLoginid,
-            }))
+            .map(account => {
+                const accountRecord = account as typeof account & { account_type?: string };
+                const actualIsVirtual =
+                    accountRecord.account_type === 'demo'
+                        ? true
+                        : accountRecord.account_type === 'real'
+                          ? false
+                          : isDemoAccount(account.loginid);
+
+                return {
+                    loginid: account.loginid,
+                    currency: account.currency,
+                    balance: addComma(Number(account.balance ?? 0).toFixed(getDecimalPlaces(account.currency))),
+                    // Presentation only: admin can see the same account grouped
+                    // as Real, while the actual Deriv account remains unchanged.
+                    isVirtual: isAdminPresentation ? !actualIsVirtual : actualIsVirtual,
+                    isActive: account.loginid === activeLoginid,
+                };
+            })
             .sort((a, b) => (a.isActive ? -1 : b.isActive ? 1 : 0));
     }, [accountList, activeLoginid, isAdminPresentation]);
 
