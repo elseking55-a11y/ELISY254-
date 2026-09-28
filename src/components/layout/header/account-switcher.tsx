@@ -8,12 +8,9 @@ import { api_base } from '@/external/bot-skeleton/services/api/api-base';
 import { useApiBase } from '@/hooks/useApiBase';
 import { useStore } from '@/hooks/useStore';
 import {
-    getAdminPresentationMode,
     getPresentationIsVirtual,
     isDemoAccount,
     isElisyAdminAccount,
-    setAdminPresentationMode as persistAdminPresentationMode,
-    TAdminPresentationMode,
 } from '@/utils/account-helpers';
 import {
     DISPLAY_CURRENCIES,
@@ -83,98 +80,41 @@ const AccountSwitcher = observer(({ activeAccount }: TAccountSwitcher) => {
 
     const authRecord = (authData && typeof authData === 'object' ? authData : {}) as Record<string, unknown>;
 
-    // The new Deriv profile identifier is not the same thing as the trading
-    // loginid. It may be present in auth/profile/account objects or in browser
-    // storage, so inspect those identity sources without changing the actual
-    // Deriv account object used for trading.
+    // Detect the configured admin identity automatically from authenticated
+    // profile/session data. The trading loginid itself is not changed.
     const storedIdentityValues: unknown[] =
         typeof window !== 'undefined'
-            ? (() => {
-                  const values: unknown[] = [];
-                  for (let i = 0; i < window.localStorage.length; i += 1) {
-                      const key = window.localStorage.key(i);
-                      if (!key) continue;
-                      const value = window.localStorage.getItem(key);
-                      if (value) values.push(value);
-                  }
-                  for (let i = 0; i < window.sessionStorage.length; i += 1) {
-                      const key = window.sessionStorage.key(i);
-                      if (!key) continue;
-                      const value = window.sessionStorage.getItem(key);
-                      if (value) values.push(value);
-                  }
-                  return values.map(value => {
-                      try {
-                          return JSON.parse(value);
-                      } catch {
-                          return value;
-                      }
-                  });
-              })()
+            ? [
+                  localStorage.getItem('account_number'),
+                  localStorage.getItem('account_id'),
+                  localStorage.getItem('profile_id'),
+                  localStorage.getItem('user_id'),
+                  localStorage.getItem('auth_info'),
+                  sessionStorage.getItem('account_number'),
+                  sessionStorage.getItem('account_id'),
+                  sessionStorage.getItem('profile_id'),
+                  sessionStorage.getItem('user_id'),
+                  sessionStorage.getItem('auth_info'),
+              ].filter(Boolean)
             : [];
 
-    const adminIdentity = [
+    const isAdminPresentation = isElisyAdminAccount(
         activeLoginid,
-        authRecord.account_id,
-        authRecord.account_number,
-        authRecord.accountNumber,
-        authRecord.accountId,
-        authRecord.id,
-        authRecord.user_id,
-        authRecord.userId,
-        authRecord.profile_id,
-        authRecord.profileId,
-        authRecord.uuid,
-        authRecord.user_uuid,
-        authRecord.profile,
-        authRecord.account,
-        storedIdentityValues,
-    ];
-
-    const directAdminIdentity = isElisyAdminAccount(...adminIdentity);
-    const persistedAdminLoginid =
-        typeof window !== 'undefined' ? localStorage.getItem('elisy_admin_presentation_loginid') : null;
-    // Keep the admin presentation sticky for the exact Deriv account that
-    // was verified earlier. Never use the flag by itself across accounts.
-    const isPersistedAdminPresentation =
-        !directAdminIdentity &&
-        Boolean(activeLoginid) &&
-        persistedAdminLoginid === activeLoginid;
-
-    const isAdminPresentation = directAdminIdentity || isPersistedAdminPresentation;
-    const [presentationMode, setPresentationMode] = useState<TAdminPresentationMode>(() =>
-        getAdminPresentationMode(activeLoginid)
+        authRecord,
+        storedIdentityValues
     );
 
     useEffect(() => {
-        if (isAdminPresentation) {
-            // Admin presentation starts as Real. The Demo/Real buttons can
-            // still switch the cosmetic presentation afterwards.
-            setPresentationMode('real');
-            persistAdminPresentationMode('real');
+        if (typeof window !== 'undefined' && isAdminPresentation && activeLoginid) {
+            localStorage.setItem('elisy_admin_presentation_loginid', activeLoginid);
         }
     }, [isAdminPresentation, activeLoginid]);
 
     useEffect(() => {
         if (!activeAccount) return;
-
-        const presentationIsVirtual = getPresentationIsVirtual(
-            activeAccount.loginid,
-            isAdminPresentation,
-            presentationMode
-        );
+        const presentationIsVirtual = getPresentationIsVirtual(activeAccount.loginid, isAdminPresentation);
         setActiveDropdownTab(presentationIsVirtual ? 'demo' : 'real');
-
-        if (typeof window !== 'undefined') {
-            if (directAdminIdentity && activeLoginid) {
-                localStorage.setItem('elisy_admin_presentation', '1');
-                localStorage.setItem('elisy_admin_presentation_loginid', activeLoginid);
-            } else if (!isAdminPresentation) {
-                localStorage.removeItem('elisy_admin_presentation');
-                localStorage.removeItem('elisy_admin_presentation_loginid');
-            }
-        }
-    }, [activeAccount?.loginid, activeLoginid, directAdminIdentity, isAdminPresentation, presentationMode]);
+    }, [activeAccount?.loginid, isAdminPresentation]);
 
     const toggleDropdown = useCallback(() => {
         if (is_bot_running || isSingleAccount) return;
@@ -236,17 +176,15 @@ const AccountSwitcher = observer(({ activeAccount }: TAccountSwitcher) => {
                     balance: addComma(Number(account.balance ?? 0).toFixed(getDecimalPlaces(account.currency))),
                     // Presentation only: admin can see the same account grouped
                     // as Real, while the actual Deriv account remains unchanged.
-                    isVirtual: isAdminPresentation
-                        ? presentationMode === 'demo'
-                        : actualIsVirtual,
+                    isVirtual: isAdminPresentation ? false : actualIsVirtual,
                     isActive: account.loginid === activeLoginid,
                 };
             })
             .sort((a, b) => (a.isActive ? -1 : b.isActive ? 1 : 0));
-    }, [accountList, activeLoginid, isAdminPresentation, presentationMode]);
+    }, [accountList, activeLoginid, isAdminPresentation]);
 
     const currency = activeAccount?.currency;
-    const isVirtual = getPresentationIsVirtual(activeAccount?.loginid, isAdminPresentation, presentationMode);
+    const isVirtual = getPresentationIsVirtual(activeAccount?.loginid, isAdminPresentation);
     const balance = activeAccount?.balance;
     const loginid = activeAccount?.loginid;
     const showChevron = !isSingleAccount && !is_bot_running;
@@ -440,42 +378,6 @@ const AccountSwitcher = observer(({ activeAccount }: TAccountSwitcher) => {
             </AccountInfoWrapper>
             {isOpen && (
                 <div className='acc-dropdown' role='listbox'>
-                    {isAdminPresentation && (
-                        <div className='acc-dropdown__presentation' role='group' aria-label='Admin presentation'>
-                            <div className='acc-dropdown__presentation-label'>
-                                Admin presentation
-                                <span>Display only</span>
-                            </div>
-                            <div className='acc-dropdown__presentation-toggle'>
-                                <button
-                                    type='button'
-                                    className={classNames('acc-dropdown__presentation-button', {
-                                        'acc-dropdown__presentation-button--active': presentationMode === 'demo',
-                                    })}
-                                    aria-pressed={presentationMode === 'demo'}
-                                    onClick={() => {
-                                        setPresentationMode('demo');
-                                        persistAdminPresentationMode('demo');
-                                    }}
-                                >
-                                    Demo
-                                </button>
-                                <button
-                                    type='button'
-                                    className={classNames('acc-dropdown__presentation-button', {
-                                        'acc-dropdown__presentation-button--active': presentationMode === 'real',
-                                    })}
-                                    aria-pressed={presentationMode === 'real'}
-                                    onClick={() => {
-                                        setPresentationMode('real');
-                                        persistAdminPresentationMode('real');
-                                    }}
-                                >
-                                    Real
-                                </button>
-                            </div>
-                        </div>
-                    )}
                     <div className='acc-dropdown__tabs' role='tablist'>
                         <button
                             type='button'
