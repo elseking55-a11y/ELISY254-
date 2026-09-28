@@ -170,6 +170,19 @@
         }
     }
 
+    @include mobile-or-tablet-screen {
+        &:not(.dc-drawer--open) {
+            height: 0 !important;
+            top: 100% !important;
+            overflow: visible;
+
+            .dc-drawer__container {
+                visibility: hidden;
+                pointer-events: none;
+            }
+        }
+    }
+
     &--open {
         @include mobile-or-tablet-screen {
             transform: translateY(calc(-100% + 1.6rem));
