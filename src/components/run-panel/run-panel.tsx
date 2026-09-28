@@ -12,7 +12,6 @@ import Summary from '@/components/summary';
 import TradeAnimation from '@/components/trade-animation';
 import Transactions from '@/components/transactions';
 import { DBOT_TABS } from '@/constants/bot-contents';
-import { run_panel as RUN_PANEL_TABS } from '@/constants/run-panel';
 import { popover_zindex } from '@/constants/z-indexes';
 import { useStore } from '@/hooks/useStore';
 import { MAX_TABLET_WIDTH } from '@/components/shared/utils/screen';
