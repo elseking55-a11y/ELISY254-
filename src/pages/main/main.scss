@@ -986,29 +986,6 @@
 }
 
 
-.main__global-run-bot {
-    position: fixed;
-    left: 50%;
-    bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
-    transform: translateX(-50%);
-    z-index: 95;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: .65rem;
-    min-width: 11rem;
-    height: 4.4rem;
-    padding: 0 1.8rem;
-    border: 0;
-    border-radius: 999px;
-    background: linear-gradient(135deg, #2563eb, #7c3aed);
-    color: #fff;
-    font-size: 1.35rem;
-    font-weight: 800;
-    box-shadow: 0 .8rem 2.4rem rgba(37,99,235,.38);
-    cursor: pointer;
-}
-
 @media (min-width: 601px) {
     .main__global-run-bot { display: none; }
 }
