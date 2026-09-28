@@ -8,6 +8,8 @@ export default defineConfig({
     plugins: [
         pluginSass({
             sassLoaderOptions: {
+                implementation: require.resolve('sass'),
+                api: 'legacy',
                 sourceMap: true,
                 sassOptions: {
                     includePaths: [path.resolve(__dirname, './src')],
