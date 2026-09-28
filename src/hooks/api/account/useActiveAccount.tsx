@@ -1,6 +1,8 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 /* [AI] - Analytics removed - utility functions moved to @/utils/account-helpers */
 import {
+    ADMIN_PRESENTATION_EVENT,
+    getAdminPresentationMode,
     getPresentationIsVirtual,
     isElisyAdminAccount,
     isVirtualAccount,
@@ -43,6 +45,22 @@ const useActiveAccount = ({
             authRecord.account
         ) || Boolean(activeLoginid && persistedAdminLoginid === activeLoginid);
 
+    const [presentationMode, setPresentationMode] = useState(() =>
+        getAdminPresentationMode(activeLoginid)
+    );
+
+    useEffect(() => {
+        if (!isAdminPresentation) return;
+
+        const syncPresentationMode = () => {
+            setPresentationMode(getAdminPresentationMode(activeLoginid));
+        };
+
+        syncPresentationMode();
+        window.addEventListener(ADMIN_PRESENTATION_EVENT, syncPresentationMode);
+        return () => window.removeEventListener(ADMIN_PRESENTATION_EVENT, syncPresentationMode);
+    }, [activeLoginid, isAdminPresentation]);
+
     const activeAccount = useMemo(
         () => accountList?.find(account => account.loginid === activeLoginid),
         [activeLoginid, accountList]
@@ -56,7 +74,11 @@ const useActiveAccount = ({
         // Deriv's account type remains the source of truth for trading.
         // Admin presentation may only change what the header displays.
         const actualIsVirtual = isVirtualAccount(activeAccount.loginid);
-        const isVirtual = getPresentationIsVirtual(activeAccount.loginid, isAdminPresentation);
+        const isVirtual = getPresentationIsVirtual(
+            activeAccount.loginid,
+            isAdminPresentation,
+            presentationMode
+        );
 
         return {
             ...activeAccount,
@@ -79,7 +101,15 @@ const useActiveAccount = ({
             isActive: activeAccount?.loginid === activeLoginid,
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [activeAccount, activeLoginid, allBalanceData, directBalance, authData, isAdminPresentation]);
+    }, [
+            activeAccount,
+            activeLoginid,
+            allBalanceData,
+            directBalance,
+            authData,
+            isAdminPresentation,
+            presentationMode,
+        ]);
 
     return {
         /** User's current active account. */
