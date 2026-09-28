@@ -9,9 +9,6 @@ import { generateOAuthURL, getDomainRedirectUrl, isDomainFeatureEnabled } from '
 import DesktopWrapper from '@/components/shared_ui/desktop-wrapper';
 import Dialog from '@/components/shared_ui/dialog';
 import {
-    LabelPairedChartLineCaptionRegularIcon,
-    LabelPairedChartMixedCaptionRegularIcon,
-    LabelPairedChartTrendUpCaptionRegularIcon,
     LabelPairedCircleStarCaptionRegularIcon,
     LabelPairedLightbulbCaptionRegularIcon,
     LabelPairedObjectsColumnCaptionRegularIcon,
@@ -55,8 +52,6 @@ import AutoTrades from '../auto-trades/auto-trades';
 import BestBots from '../best-bots';
 import BotIdeas from '../bot-ideas';
 import BulkTrading from '../bulk-trading';
-import ChartModal from '../chart/chart-modal';
-import ChartWrapper from '../chart/chart-wrapper';
 import Dashboard from '../dashboard';
 import RunStrategy from '../dashboard/run-strategy';
 import ManualTrading from '../manual-trading';
@@ -110,7 +105,6 @@ const AppWrapper = observer(() => {
         AUTO_TRADES,
         MANUAL_TRADING,
         SCANNER,
-        CHART,
         TRADING_VIEW,
         UP_AND_DOWN,
         BULK_TRADING,
@@ -130,7 +124,6 @@ const AppWrapper = observer(() => {
         'scanner',
         'accumilatoirs',
         'analysistool',
-        'chart',
         'tradingview',
         'bulk_trading',
         'market_hacker',
@@ -142,7 +135,6 @@ const AppWrapper = observer(() => {
     const show_manual_trading = isDomainFeatureEnabled('manualTrading');
     const show_scanner = isDomainFeatureEnabled('scanner');
     const show_accumilatoirs = isDomainFeatureEnabled('accumilatoirs');
-    const show_chart = isDomainFeatureEnabled('chart');
     const show_trading_view = isDomainFeatureEnabled('tradingView');
     const show_bulk_trading = isDomainFeatureEnabled('bulkTrading');
     const show_market_hacker = isDomainFeatureEnabled('marketHacker');
@@ -158,7 +150,6 @@ const AppWrapper = observer(() => {
         if (tab_index === AI_HUB) return show_ai_hub;
         if (tab_index === APEX_BOT) return show_apex_bot;
         if (tab_index === DBOT_TABS.ACCUMILATOIRS) return show_accumilatoirs;
-        if (tab_index === CHART) return show_chart;
         if (tab_index === TRADING_VIEW) return show_trading_view;
         return true;
     };
@@ -831,7 +822,6 @@ const AppWrapper = observer(() => {
                         <RunPanel />
                     </div>
                 )}
-                {show_chart && <ChartModal />}
             </DesktopWrapper>
             <button
                 type='button'
