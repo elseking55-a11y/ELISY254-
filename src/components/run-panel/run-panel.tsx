@@ -197,11 +197,23 @@ const DrawerFooter = ({ is_clear_stat_disabled, onClearStatClick }: TDrawerFoote
     </div>
 );
 
-const MobileDrawerFooter = () => {
+const MobileDrawerFooter = ({
+    onOpenSummary,
+}: {
+    onOpenSummary: () => void;
+}) => {
     return (
         <div className='controls__section'>
             <div className='controls__buttons'>
                 <TradeAnimation className='controls__animation' should_show_overlay />
+                <Button
+                    className='controls__summary-button'
+                    onClick={onOpenSummary}
+                    has_effect
+                    primary
+                >
+                    <Localize i18n_default_text='Summary' />
+                </Button>
             </div>
         </div>
     );
@@ -359,7 +371,14 @@ const RunPanel = observer(() => {
                 >
                     {content}
                 </Drawer>
-                {!isDesktop && active_tab !== UP_AND_DOWN && <MobileDrawerFooter />}
+                {!isDesktop && active_tab !== UP_AND_DOWN && (
+                    <MobileDrawerFooter
+                        onOpenSummary={() => {
+                            setActiveTabIndex(0);
+                            toggleDrawer(true);
+                        }}
+                    />
+                )}
             </div>
 
             <StatisticsInfoModal
