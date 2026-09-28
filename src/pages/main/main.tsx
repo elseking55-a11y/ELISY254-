@@ -740,7 +740,7 @@ const AppWrapper = observer(() => {
                                                 width='24px'
                                                 fill='#1a73e8'
                                             />
-                                            <Localize i18n_default_text='DTrader' />
+                                            <Localize i18n_default_text='Trading View' />
                                         </>
                                     }
                                     id='id-tradingview'
@@ -833,7 +833,7 @@ const AppWrapper = observer(() => {
                 )}
                 {show_chart && <ChartModal />}
             </DesktopWrapper>
-            <MobileWrapper>{should_show_run_panel && !is_open && <RunPanel />}</MobileWrapper>
+            <MobileWrapper>\n                {should_show_run_panel && !is_open && <RunPanel />}\n                {should_show_run_panel && !is_open && (\n                    <button\n                        type='button'\n                        className='main__mobile-run-bot'\n                        onClick={() => run_panel.toggleDrawer(true)}\n                        aria-label='Open Run Bot controls'\n                    >\n                        <span>▶</span> Run Bot\n                    </button>\n                )}\n            </MobileWrapper>
             <Dialog
                 cancel_button_text={navigation_stop_in_progress ? undefined : localize('Stay')}
                 className='dc-dialog__wrapper--fixed'
