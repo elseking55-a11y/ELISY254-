@@ -573,7 +573,7 @@ const AppWrapper = observer(() => {
                                             width='24px'
                                             fill='#00b8ad'
                                         />
-                                        <Localize i18n_default_text='Bot Builder' />
+                                        <Localize i18n_default_text='Dashboard' />
                                     </>
                                 }
                                 id='id-bot-builder'
@@ -616,7 +616,7 @@ const AppWrapper = observer(() => {
                                             width='24px'
                                             fill='#00b8ad'
                                         />
-                                        <Localize i18n_default_text='Dashboard' />
+                                        <Localize i18n_default_text='Bot Builder' />
                                     </>
                                 }
                                 id='id-dbot-dashboard'
