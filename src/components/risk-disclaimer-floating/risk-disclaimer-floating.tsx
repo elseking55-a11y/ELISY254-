@@ -1,12 +1,64 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import styles from './risk-disclaimer-floating.module.scss';
 
 const RiskDisclaimerFloating = () => {
     const [is_open, setIsOpen] = useState(false);
+    const [position, setPosition] = useState({ x: 16, y: 16 });
+    const drag = useRef({ active: false, startX: 0, startY: 0, originX: 16, originY: 16, moved: false });
+
+    const onPointerDown = (event: React.PointerEvent<HTMLButtonElement>) => {
+        drag.current = {
+            active: true,
+            startX: event.clientX,
+            startY: event.clientY,
+            originX: position.x,
+            originY: position.y,
+            moved: false,
+        };
+        event.currentTarget.setPointerCapture(event.pointerId);
+    };
+
+    const onPointerMove = (event: React.PointerEvent<HTMLButtonElement>) => {
+        if (!drag.current.active) return;
+        const dx = event.clientX - drag.current.startX;
+        const dy = event.clientY - drag.current.startY;
+        if (Math.abs(dx) > 4 || Math.abs(dy) > 4) drag.current.moved = true;
+        const width = event.currentTarget.offsetWidth;
+        const height = event.currentTarget.offsetHeight;
+        const maxX = Math.max(8, window.innerWidth - width - 8);
+        const maxY = Math.max(8, window.innerHeight - height - 8);
+        setPosition({
+            x: Math.min(maxX, Math.max(8, drag.current.originX + dx)),
+            y: Math.min(maxY, Math.max(8, drag.current.originY + dy)),
+        });
+    };
+
+    const onPointerUp = (event: React.PointerEvent<HTMLButtonElement>) => {
+        drag.current.active = false;
+        try {
+            event.currentTarget.releasePointerCapture(event.pointerId);
+        } catch {
+            // Pointer capture may already have been released.
+        }
+    };
+
+    const onTriggerClick = () => {
+        if (!drag.current.moved) setIsOpen(true);
+        drag.current.moved = false;
+    };
 
     return (
         <>
-            <button className={styles.trigger} onClick={() => setIsOpen(true)} type='button'>
+            <button
+                className={styles.trigger}
+                style={{ left: `${position.x}px`, top: `${position.y}px`, bottom: 'auto' }}
+                onPointerDown={onPointerDown}
+                onPointerMove={onPointerMove}
+                onPointerUp={onPointerUp}
+                onPointerCancel={onPointerUp}
+                onClick={onTriggerClick}
+                type='button'
+            >
                 <span className={styles.icon}>!</span>
                 <span>Risk Disclaimer</span>
             </button>
