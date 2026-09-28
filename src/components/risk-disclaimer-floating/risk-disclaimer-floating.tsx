@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, type PointerEvent } from 'react';
 import styles from './risk-disclaimer-floating.module.scss';
 
 const RiskDisclaimerFloating = () => {
@@ -6,7 +6,7 @@ const RiskDisclaimerFloating = () => {
     const [position, setPosition] = useState({ x: 16, y: 16 });
     const drag = useRef({ active: false, startX: 0, startY: 0, originX: 16, originY: 16, moved: false });
 
-    const onPointerDown = (event: React.PointerEvent<HTMLButtonElement>) => {
+    const onPointerDown = (event: PointerEvent<HTMLButtonElement>) => {
         drag.current = {
             active: true,
             startX: event.clientX,
