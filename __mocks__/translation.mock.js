@@ -18,5 +18,6 @@ const localize = jest.fn(text => text);
 const getAllowedLanguages = jest.fn(() => ({ EN: 'English', VI: 'Tiếng Việt' }));
 
 const initializeI18n = jest.fn(() => {});
+const getInitialLanguage = jest.fn(() => 'EN');
 
-export { getAllowedLanguages, initializeI18n, Localize, localize, useTranslations };
+export { getAllowedLanguages, getInitialLanguage, initializeI18n, Localize, localize, useTranslations };
