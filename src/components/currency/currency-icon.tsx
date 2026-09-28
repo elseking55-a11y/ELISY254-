@@ -162,40 +162,13 @@ const CURRENCY_ICONS = {
     ),
 };
 
-const USFlagIcon = () => (
-    <svg
-        aria-label='US flag'
-        role='img'
-        viewBox='0 0 36 24'
-        width='28'
-        height='19'
-        xmlns='http://www.w3.org/2000/svg'
-        style={{ display: 'block', borderRadius: '3px', overflow: 'hidden' }}
-    >
-        <rect width='36' height='24' fill='#fff' />
-        <path fill='#e31d1a' d='M0 0h36v2H0zm0 4h36v2H0zm0 4h36v2H0zm0 4h36v2H0zm0 4h36v2H0zm0 4h36v2H0z' />
-        <rect width='16' height='13' fill='#21468b' />
-        <g fill='#fff' fontSize='2.2'>
-            <text x='1.5' y='3'>★ ★ ★ ★</text>
-            <text x='2.5' y='6'>★ ★ ★ ★ ★</text>
-            <text x='1.5' y='9'>★ ★ ★ ★</text>
-            <text x='2.5' y='12'>★ ★ ★ ★ ★</text>
-        </g>
-    </svg>
-);
-
 export const CurrencyIcon = ({
     currency,
     isVirtual,
-    showUSFlag = false,
 }: {
     currency?: string;
     isVirtual?: boolean;
-    showUSFlag?: boolean;
 }) => {
-    if (showUSFlag) {
-        return <USFlagIcon />;
-    }
     const Icon = isVirtual
         ? CURRENCY_ICONS.virtual
         : CURRENCY_ICONS[currency?.toLowerCase() as keyof typeof CURRENCY_ICONS] || CURRENCY_ICONS.unknown;
