@@ -568,6 +568,19 @@ const AppWrapper = observer(() => {
                             <div
                                 label={
                                     <>
+                                        <LabelPairedPuzzlePieceTwoCaptionBoldIcon
+                                            height='24px'
+                                            width='24px'
+                                            fill='#00b8ad'
+                                        />
+                                        <Localize i18n_default_text='Bot Builder' />
+                                    </>
+                                }
+                                id='id-bot-builder'
+                            />
+                            <div
+                                label={
+                                    <>
                                         <LabelPairedCircleStarCaptionRegularIcon
                                             height='24px'
                                             width='24px'
@@ -588,7 +601,7 @@ const AppWrapper = observer(() => {
                                             width='24px'
                                             fill='#7c5cff'
                                         />
-                                        <Localize i18n_default_text='Signal AI' />
+                                        <Localize i18n_default_text='AI Bot' />
                                     </>
                                 }
                                 id='id-up-and-down'
@@ -603,26 +616,13 @@ const AppWrapper = observer(() => {
                                             width='24px'
                                             fill='#00b8ad'
                                         />
-                                        <Localize i18n_default_text='Quick Bot' />
+                                        <Localize i18n_default_text='Dashboard' />
                                     </>
                                 }
                                 id='id-dbot-dashboard'
                             >
                                 <Dashboard handleTabChange={handleTabChange} />
                             </div>
-                            <div
-                                label={
-                                    <>
-                                        <LabelPairedPuzzlePieceTwoCaptionBoldIcon
-                                            height='24px'
-                                            width='24px'
-                                            fill='#00b8ad'
-                                        />
-                                        <Localize i18n_default_text='Bot Builder' />
-                                    </>
-                                }
-                                id='id-bot-builder'
-                            />
                             {show_auto_trades && (
                                 <div
                                     label={
@@ -749,7 +749,7 @@ const AppWrapper = observer(() => {
                                                 width='24px'
                                                 fill='#ff4f9a'
                                             />
-                                            <Localize i18n_default_text='Market Hacker' />
+                                            <Localize i18n_default_text='Premium' />
                                         </>
                                     }
                                     id='id-market-hacker'
@@ -766,7 +766,7 @@ const AppWrapper = observer(() => {
                                                 width='24px'
                                                 fill='#ff4f9a'
                                             />
-                                            <Localize i18n_default_text='AI Hub' />
+                                            <Localize i18n_default_text='AI Bot' />
                                         </>
                                     }
                                     id='id-ai-hub'
@@ -783,7 +783,7 @@ const AppWrapper = observer(() => {
                                                 width='24px'
                                                 fill='#ff4f9a'
                                             />
-                                            <Localize i18n_default_text='Apex Bot' />
+                                            <Localize i18n_default_text='Elisy' />
                                         </>
                                     }
                                     id='id-apex-bot'
