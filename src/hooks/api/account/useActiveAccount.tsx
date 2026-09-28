@@ -4,7 +4,6 @@ import {
     getPresentationIsVirtual,
     isElisyAdminAccount,
     isVirtualAccount,
-    shouldShowUsdAccountIcon,
 } from '@/utils/account-helpers';
 /* [/AI] */
 import { CurrencyIcon } from '@/components/currency/currency-icon';
@@ -25,22 +24,22 @@ const useActiveAccount = ({
     const authRecord = (authData && typeof authData === 'object' ? authData : {}) as Record<string, unknown>;
     const persistedAdminLoginid =
         typeof window !== 'undefined' ? localStorage.getItem('elisy_admin_presentation_loginid') : null;
+    const storedIdentityValues: unknown[] =
+        typeof window !== 'undefined'
+            ? Array.from({ length: localStorage.length }, (_, index) => localStorage.getItem(localStorage.key(index) || ''))
+                  .concat(
+                      Array.from({ length: sessionStorage.length }, (_, index) =>
+                          sessionStorage.getItem(sessionStorage.key(index) || '')
+                      )
+                  )
+                  .filter(Boolean)
+            : [];
+
     const isAdminPresentation =
         isElisyAdminAccount(
             activeLoginid,
-            authRecord.account_id,
-            authRecord.account_number,
-            authRecord.accountNumber,
-            authRecord.accountId,
-            authRecord.id,
-            authRecord.user_id,
-            authRecord.userId,
-            authRecord.profile_id,
-            authRecord.profileId,
-            authRecord.uuid,
-            authRecord.user_uuid,
-            authRecord.profile,
-            authRecord.account
+            authRecord,
+            storedIdentityValues
         ) || Boolean(activeLoginid && persistedAdminLoginid === activeLoginid);
 
     const activeAccount = useMemo(
@@ -71,8 +70,8 @@ const useActiveAccount = ({
             currencyLabel: isVirtual ? 'Demo' : activeAccount?.currency,
             icon: (
                 <CurrencyIcon
-                    currency={isAdminPresentation || shouldShowUsdAccountIcon(activeAccount.loginid) ? 'usd' : undefined}
-                    isVirtual={!isAdminPresentation && !shouldShowUsdAccountIcon(activeAccount.loginid)}
+                    currency={!actualIsVirtual || isAdminPresentation ? 'usd' : undefined}
+                    isVirtual={actualIsVirtual && !isAdminPresentation}
                 />
             ),
             isVirtual: isVirtual,
