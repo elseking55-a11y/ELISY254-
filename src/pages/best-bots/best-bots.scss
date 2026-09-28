@@ -126,41 +126,6 @@
         --bb-card-metric-border: rgb(128 145 255 / 0.12);
     }
 
-    &--premium {
-        --bb-card-border: rgb(255 178 0 / 0.3);
-        --bb-card-shadow: 0 1.6rem 4rem rgb(255 166 0 / 0.18);
-        --bb-card-text: #2d2420;
-        --bb-card-muted: #726250;
-        --bb-card-surface: linear-gradient(180deg, #fffef7, #fff2cf);
-        --bb-card-guide-bg: rgb(255 255 255 / 0.85);
-        --bb-card-guide-border: rgb(255 154 101 / 0.18);
-        --bb-card-guide-text: #5b4d3c;
-        --bb-card-load-bg: linear-gradient(90deg, #ffbc00, #f6a300);
-        --bb-card-load-shadow: 0 1rem 2rem rgb(255 175 0 / 0.3);
-        --bb-card-copy-bg: rgb(255 190 24 / 0.08);
-        --bb-card-copy-border: rgb(255 190 24 / 0.24);
-        --bb-card-copy-icon: #4672ff;
-        --bb-card-metric-bg: rgb(255 255 255 / 0.72);
-        --bb-card-metric-border: rgb(255 190 24 / 0.12);
-        border-top-color: #f5b000;
-    }
-
-    &--premium.bb-card--dark {
-        --bb-card-border: rgb(255 186 32 / 0.4);
-        --bb-card-shadow: 0 1.6rem 4rem rgb(0 0 0 / 0.42);
-        --bb-card-text: #fff4d5;
-        --bb-card-muted: #f0ddb0;
-        --bb-card-surface: linear-gradient(180deg, rgb(53 38 7 / 0.98), rgb(76 52 7 / 0.98));
-        --bb-card-guide-bg: rgb(255 255 255 / 0.08);
-        --bb-card-guide-border: rgb(255 211 96 / 0.2);
-        --bb-card-guide-text: #fff3d0;
-        --bb-card-copy-bg: rgb(255 190 24 / 0.12);
-        --bb-card-copy-border: rgb(255 211 96 / 0.24);
-        --bb-card-copy-icon: #ffe099;
-        --bb-card-metric-bg: rgb(255 255 255 / 0.08);
-        --bb-card-metric-border: rgb(255 211 96 / 0.16);
-    }
-
     &__header {
         display: flex;
         align-items: flex-start;
@@ -175,24 +140,52 @@
         flex-wrap: wrap;
     }
 
-    &__eyebrow {
+    &__metal-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 7rem;
+        height: 2.8rem;
+        padding: 0 1rem;
+        border-radius: 999rem;
         font-size: 1rem;
-        font-weight: 800;
-        letter-spacing: 0.18em;
-        text-transform: uppercase;
-        color: #6280ff;
+        font-weight: 900;
+        letter-spacing: 0.12em;
+        color: #ffffff;
+        background: linear-gradient(135deg, #d4af37, #fff0a6 45%, #b8860b);
+        box-shadow: 0 0.5rem 1.2rem rgb(184 134 11 / 0.2);
     }
 
-    &__premium-badge {
-        margin-left: auto;
-        padding: 0.45rem 0.9rem;
-        border-radius: 999rem;
-        background: linear-gradient(90deg, #ffcd38, #ffb300);
-        color: #6a4200;
-        font-size: 1rem;
-        font-weight: 800;
-        letter-spacing: 0.12em;
-        text-transform: uppercase;
+    &--silver {
+        border-top-color: #aeb7c4;
+        --bb-card-border: rgb(148 163 184 / 0.35);
+        --bb-card-surface: linear-gradient(180deg, #ffffff, #eef2f7);
+    }
+
+    &--silver &__metal-badge {
+        background: linear-gradient(135deg, #7d8794, #f4f6f8 48%, #9aa3ad);
+        color: #26313d;
+    }
+
+    &--bronze {
+        border-top-color: #b87333;
+        --bb-card-border: rgb(184 115 51 / 0.28);
+        --bb-card-surface: linear-gradient(180deg, #fffaf5, #f6e4d3);
+    }
+
+    &--bronze &__metal-badge {
+        background: linear-gradient(135deg, #8c4a22, #e5ad7a 48%, #9b5527);
+    }
+
+    &--gold {
+        border-top-color: #d4af37;
+        --bb-card-border: rgb(212 175 55 / 0.32);
+        --bb-card-surface: linear-gradient(180deg, #fffef8, #fff1c7);
+    }
+
+    &--gold &__metal-badge {
+        background: linear-gradient(135deg, #a87900, #ffe58a 48%, #c79a18);
+        color: #4d3500;
     }
 
     &__copy {
@@ -244,69 +237,6 @@
         @include mobile-or-tablet-screen {
             font-size: 1.92rem;
         }
-    }
-
-    &__desc {
-        min-height: 6rem;
-        margin: 0;
-        color: var(--bb-card-muted);
-        font-size: 1.22rem;
-        line-height: 1.6;
-    }
-
-    &__performance {
-        display: grid;
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-        gap: 0.8rem;
-
-        @include mobile-or-tablet-screen {
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-        }
-    }
-
-    &__metric {
-        display: flex;
-        flex-direction: column;
-        gap: 0.2rem;
-        padding: 0.9rem;
-        border-radius: 1rem;
-        background: var(--bb-card-metric-bg);
-        border: 1px solid var(--bb-card-metric-border);
-
-        strong {
-            color: var(--bb-card-text);
-            font-size: 1.38rem;
-            font-weight: 800;
-            line-height: 1.1;
-        }
-
-        span {
-            color: var(--bb-card-muted);
-            font-size: 1.02rem;
-            font-weight: 600;
-        }
-    }
-
-    &__profit-line {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 1rem;
-    }
-
-    &__profit-label {
-        color: var(--bb-card-muted);
-        font-size: 1.08rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-    }
-
-    &__profit-value {
-        color: #00a85a;
-        font-size: 1.5rem;
-        font-weight: 800;
-        white-space: nowrap;
     }
 
     &__actions {
