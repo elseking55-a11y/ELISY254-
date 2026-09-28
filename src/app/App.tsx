@@ -16,6 +16,17 @@ import ErrorBoundary from './ErrorBoundary';
 import './app-root.scss';
 
 const Layout = lazy(() => import('../components/layout'));
+
+const AppRefreshGate = ({ children }: { children: React.ReactNode }) => {
+    React.useEffect(() => {
+        const navigationEntry = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined;
+        if (navigationEntry?.type === 'reload') {
+            window.location.replace('/');
+        }
+    }, []);
+
+    return <>{children}</>;
+};
 const AppRoot = lazy(() => import('./app-root'));
 const RootGate = lazy(() => import('./RootGate'));
 const Landing = lazy(() => import('../pages/landing'));
@@ -82,10 +93,11 @@ const router = createBrowserRouter(
             <Route
                 path='/app'
                 element={
-                    <Suspense
-                        fallback={<ChunkLoader message={localize('Please wait while we connect to the server...')} />}
-                    >
-                        <TranslationProvider defaultLang='EN' i18nInstance={i18nInstance}>
+                    <AppRefreshGate>
+                        <Suspense
+                            fallback={<ChunkLoader message={localize('Please wait while we connect to the server...')} />}
+                        >
+                            <TranslationProvider defaultLang='EN' i18nInstance={i18nInstance}>
                             <LanguageHandler>
                                 <StoreProvider>
                                     <LocalStorageSyncWrapper>
@@ -96,8 +108,9 @@ const router = createBrowserRouter(
                                     </LocalStorageSyncWrapper>
                                 </StoreProvider>
                             </LanguageHandler>
-                        </TranslationProvider>
-                    </Suspense>
+                            </TranslationProvider>
+                        </Suspense>
+                    </AppRefreshGate>
                 }
             >
                 {/* All child routes will be passed as children to Layout */}
