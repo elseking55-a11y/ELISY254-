@@ -7,7 +7,12 @@ import Text from '@/components/shared_ui/text';
 import { api_base } from '@/external/bot-skeleton/services/api/api-base';
 import { useApiBase } from '@/hooks/useApiBase';
 import { useStore } from '@/hooks/useStore';
-import { isDemoAccount, shouldShowUsdAccountIcon } from '@/utils/account-helpers';
+import {
+    getPresentationIsVirtual,
+    isDemoAccount,
+    isElisyAdminAccount,
+    shouldShowUsdAccountIcon,
+} from '@/utils/account-helpers';
 import {
     DISPLAY_CURRENCIES,
     formatDisplayBalanceValue,
@@ -77,7 +82,7 @@ const AccountSwitcher = observer(({ activeAccount }: TAccountSwitcher) => {
     useEffect(() => {
         if (!activeAccount) return;
 
-        setActiveDropdownTab(activeAccount.isVirtual ? 'demo' : 'real');
+        setActiveDropdownTab(getPresentationIsVirtual(activeAccount.loginid) ? 'demo' : 'real');
     }, [activeAccount?.isVirtual, activeAccount?.loginid]);
 
     const toggleDropdown = useCallback(() => {
@@ -129,14 +134,17 @@ const AccountSwitcher = observer(({ activeAccount }: TAccountSwitcher) => {
                 loginid: account.loginid,
                 currency: account.currency,
                 balance: addComma(Number(account.balance ?? 0).toFixed(getDecimalPlaces(account.currency))),
-                isVirtual: isDemoAccount(account.loginid),
+                isVirtual: getPresentationIsVirtual(account.loginid),
                 isActive: account.loginid === activeLoginid,
             }))
             .sort((a, b) => (a.isActive ? -1 : b.isActive ? 1 : 0));
     }, [accountList, activeLoginid]);
 
     const currency = activeAccount?.currency;
-    const isVirtual = activeAccount?.isVirtual ?? false;
+    const actualIsVirtual = activeAccount?.isVirtual ?? false;
+    void actualIsVirtual;
+    const isAdminPresentation = isElisyAdminAccount(activeAccount?.loginid);
+    const isVirtual = getPresentationIsVirtual(activeAccount?.loginid);
     const balance = activeAccount?.balance;
     const loginid = activeAccount?.loginid;
     const showChevron = !isSingleAccount && !is_bot_running;
@@ -291,8 +299,8 @@ const AccountSwitcher = observer(({ activeAccount }: TAccountSwitcher) => {
                 >
                     <span className='acc-info__id' aria-hidden='true'>
                         <CurrencyIcon
-                            currency={loginid && shouldShowUsdAccountIcon(loginid) ? 'usd' : undefined}
-                            isVirtual={!loginid || !shouldShowUsdAccountIcon(loginid)}
+                            currency={loginid && !isVirtual ? 'usd' : undefined}
+                            isVirtual={!loginid || isVirtual}
                         />
                     </span>
                     <div className='acc-info__content'>
@@ -362,7 +370,7 @@ const AccountSwitcher = observer(({ activeAccount }: TAccountSwitcher) => {
                                 aria-expanded={expandedGroups.real}
                                 onClick={() => handleGroupToggle('real')}
                             >
-                                <span>Deriv accounts</span>
+                                <span>{isAdminPresentation ? 'Presented as Real' : 'Deriv accounts'}</span>
                                 <span
                                     className={classNames('acc-dropdown__group-chevron', {
                                         'acc-dropdown__group-chevron--collapsed': !expandedGroups.real,
@@ -425,7 +433,7 @@ const AccountSwitcher = observer(({ activeAccount }: TAccountSwitcher) => {
                                 aria-expanded={expandedGroups.demo}
                                 onClick={() => handleGroupToggle('demo')}
                             >
-                                <span>Demo accounts</span>
+                                <span>{isAdminPresentation ? 'Presented as Demo' : 'Demo accounts'}</span>
                                 <span
                                     className={classNames('acc-dropdown__group-chevron', {
                                         'acc-dropdown__group-chevron--collapsed': !expandedGroups.demo,
@@ -455,8 +463,8 @@ const AccountSwitcher = observer(({ activeAccount }: TAccountSwitcher) => {
                                     >
                                         <span className='acc-dropdown__account-icon'>
                                             <CurrencyIcon
-                                                currency={shouldShowUsdAccountIcon(account.loginid) ? 'usd' : undefined}
-                                                isVirtual={!shouldShowUsdAccountIcon(account.loginid)}
+                                                currency={!account.isVirtual ? 'usd' : undefined}
+                                                isVirtual={account.isVirtual}
                                             />
                                         </span>
                                         <span className='acc-dropdown__account-info'>
@@ -484,6 +492,12 @@ const AccountSwitcher = observer(({ activeAccount }: TAccountSwitcher) => {
                     )}
                     {activeDropdownTab === 'demo' && demoAccounts.length === 0 && (
                         <div className='acc-dropdown__empty'>No demo accounts available.</div>
+                    )}
+
+                    {isAdminPresentation && (
+                        <div className='acc-dropdown__admin-presentation' role='status'>
+                            Admin presentation: labels and icons are swapped only for this account. Deriv account data and trading state are unchanged.
+                        </div>
                     )}
 
                     {/* Demo reset section */}
