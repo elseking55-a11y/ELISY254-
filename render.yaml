@@ -1,17 +1,17 @@
 services:
   - type: web
-    name: elisy254-backend
+    name: elisy254
     runtime: node
     plan: free
-    rootDir: backend
-    buildCommand: npm ci
-    startCommand: npm run server
+    rootDir: .
+    buildCommand: npm install --legacy-peer-deps --ignore-scripts && npm run build && npm --prefix backend ci
+    startCommand: npm --prefix backend run server
     healthCheckPath: /health
     envVars:
       - key: NODE_ENV
         value: production
       - key: NODE_VERSION
-        value: 20.19.5
+        value: 22.21.1
       - key: PORT
         value: 10000
       - key: CORS_ORIGIN
@@ -24,4 +24,3 @@ services:
         sync: false
       - key: SUPABASE_SERVICE_ROLE_KEY
         sync: false
-
