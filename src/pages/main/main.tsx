@@ -833,7 +833,19 @@ const AppWrapper = observer(() => {
                 )}
                 {show_chart && <ChartModal />}
             </DesktopWrapper>
-            <MobileWrapper>\n                {should_show_run_panel && !is_open && <RunPanel />}\n                {should_show_run_panel && !is_open && (\n                    <button\n                        type='button'\n                        className='main__mobile-run-bot'\n                        onClick={() => run_panel.toggleDrawer(true)}\n                        aria-label='Open Run Bot controls'\n                    >\n                        <span>▶</span> Run Bot\n                    </button>\n                )}\n            </MobileWrapper>
+            <MobileWrapper>
+                {should_show_run_panel && !is_open && <RunPanel />}
+                {should_show_run_panel && !is_open && (
+                    <button
+                        type='button'
+                        className='main__mobile-run-bot'
+                        onClick={() => run_panel.toggleDrawer(true)}
+                        aria-label='Open Run Bot controls'
+                    >
+                        <span>▶</span> Run Bot
+                    </button>
+                )}
+            </MobileWrapper>
             <Dialog
                 cancel_button_text={navigation_stop_in_progress ? undefined : localize('Stay')}
                 className='dc-dialog__wrapper--fixed'
