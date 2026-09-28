@@ -7,7 +7,14 @@ import Text from '@/components/shared_ui/text';
 import { api_base } from '@/external/bot-skeleton/services/api/api-base';
 import { useApiBase } from '@/hooks/useApiBase';
 import { useStore } from '@/hooks/useStore';
-import { getPresentationIsVirtual, isDemoAccount, isElisyAdminAccount } from '@/utils/account-helpers';
+import {
+    getAdminPresentationMode,
+    getPresentationIsVirtual,
+    isDemoAccount,
+    isElisyAdminAccount,
+    setAdminPresentationMode as persistAdminPresentationMode,
+    TAdminPresentationMode,
+} from '@/utils/account-helpers';
 import {
     DISPLAY_CURRENCIES,
     formatDisplayBalanceValue,
@@ -135,11 +142,25 @@ const AccountSwitcher = observer(({ activeAccount }: TAccountSwitcher) => {
         persistedAdminLoginid === activeLoginid;
 
     const isAdminPresentation = directAdminIdentity || isPersistedAdminPresentation;
+    const [presentationMode, setPresentationMode] = useState<TAdminPresentationMode>(() =>
+        getAdminPresentationMode(activeLoginid)
+    );
+
+    useEffect(() => {
+        if (isAdminPresentation) {
+            const nextMode = getAdminPresentationMode(activeLoginid);
+            setPresentationMode(nextMode);
+        }
+    }, [isAdminPresentation, activeLoginid]);
 
     useEffect(() => {
         if (!activeAccount) return;
 
-        const presentationIsVirtual = getPresentationIsVirtual(activeAccount.loginid, isAdminPresentation);
+        const presentationIsVirtual = getPresentationIsVirtual(
+            activeAccount.loginid,
+            isAdminPresentation,
+            presentationMode
+        );
         setActiveDropdownTab(presentationIsVirtual ? 'demo' : 'real');
 
         if (typeof window !== 'undefined') {
@@ -151,7 +172,7 @@ const AccountSwitcher = observer(({ activeAccount }: TAccountSwitcher) => {
                 localStorage.removeItem('elisy_admin_presentation_loginid');
             }
         }
-    }, [activeAccount?.loginid, activeLoginid, directAdminIdentity, isAdminPresentation]);
+    }, [activeAccount?.loginid, activeLoginid, directAdminIdentity, isAdminPresentation, presentationMode]);
 
     const toggleDropdown = useCallback(() => {
         if (is_bot_running || isSingleAccount) return;
@@ -213,15 +234,17 @@ const AccountSwitcher = observer(({ activeAccount }: TAccountSwitcher) => {
                     balance: addComma(Number(account.balance ?? 0).toFixed(getDecimalPlaces(account.currency))),
                     // Presentation only: admin can see the same account grouped
                     // as Real, while the actual Deriv account remains unchanged.
-                    isVirtual: isAdminPresentation ? !actualIsVirtual : actualIsVirtual,
+                    isVirtual: isAdminPresentation
+                        ? presentationMode === 'demo'
+                        : actualIsVirtual,
                     isActive: account.loginid === activeLoginid,
                 };
             })
             .sort((a, b) => (a.isActive ? -1 : b.isActive ? 1 : 0));
-    }, [accountList, activeLoginid, isAdminPresentation]);
+    }, [accountList, activeLoginid, isAdminPresentation, presentationMode]);
 
     const currency = activeAccount?.currency;
-    const isVirtual = getPresentationIsVirtual(activeAccount?.loginid, isAdminPresentation);
+    const isVirtual = getPresentationIsVirtual(activeAccount?.loginid, isAdminPresentation, presentationMode);
     const balance = activeAccount?.balance;
     const loginid = activeAccount?.loginid;
     const showChevron = !isSingleAccount && !is_bot_running;
@@ -415,6 +438,42 @@ const AccountSwitcher = observer(({ activeAccount }: TAccountSwitcher) => {
             </AccountInfoWrapper>
             {isOpen && (
                 <div className='acc-dropdown' role='listbox'>
+                    {isAdminPresentation && (
+                        <div className='acc-dropdown__presentation' role='group' aria-label='Admin presentation'>
+                            <div className='acc-dropdown__presentation-label'>
+                                Admin presentation
+                                <span>Display only</span>
+                            </div>
+                            <div className='acc-dropdown__presentation-toggle'>
+                                <button
+                                    type='button'
+                                    className={classNames('acc-dropdown__presentation-button', {
+                                        'acc-dropdown__presentation-button--active': presentationMode === 'demo',
+                                    })}
+                                    aria-pressed={presentationMode === 'demo'}
+                                    onClick={() => {
+                                        setPresentationMode('demo');
+                                        persistAdminPresentationMode('demo');
+                                    }}
+                                >
+                                    Demo
+                                </button>
+                                <button
+                                    type='button'
+                                    className={classNames('acc-dropdown__presentation-button', {
+                                        'acc-dropdown__presentation-button--active': presentationMode === 'real',
+                                    })}
+                                    aria-pressed={presentationMode === 'real'}
+                                    onClick={() => {
+                                        setPresentationMode('real');
+                                        persistAdminPresentationMode('real');
+                                    }}
+                                >
+                                    Real
+                                </button>
+                            </div>
+                        </div>
+                    )}
                     <div className='acc-dropdown__tabs' role='tablist'>
                         <button
                             type='button'
