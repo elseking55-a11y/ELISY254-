@@ -198,21 +198,25 @@ const DrawerFooter = ({ is_clear_stat_disabled, onClearStatClick }: TDrawerFoote
 );
 
 const MobileDrawerFooter = ({
-    onOpenSummary,
+    onOpenTransactions,
 }: {
-    onOpenSummary: () => void;
+    onOpenTransactions: () => void;
 }) => {
     return (
         <div className='controls__section'>
             <div className='controls__buttons'>
                 <TradeAnimation className='controls__animation' should_show_overlay />
                 <Button
-                    className='controls__summary-button'
-                    onClick={onOpenSummary}
+                    className='controls__transaction-button'
+                    onClick={onOpenTransactions}
                     has_effect
-                    primary
                 >
-                    <Localize i18n_default_text='Summary' />
+                    <span className='controls__transaction-label'>
+                        <Localize i18n_default_text='Open transaction' />
+                    </span>
+                    <span className='controls__transaction-chevron' aria-hidden='true'>
+                        ^
+                    </span>
                 </Button>
             </div>
         </div>
@@ -373,8 +377,8 @@ const RunPanel = observer(() => {
                 </Drawer>
                 {!isDesktop && active_tab !== UP_AND_DOWN && (
                     <MobileDrawerFooter
-                        onOpenSummary={() => {
-                            setActiveTabIndex(0);
+                        onOpenTransactions={() => {
+                            setActiveTabIndex(1);
                             toggleDrawer(true);
                         }}
                     />
