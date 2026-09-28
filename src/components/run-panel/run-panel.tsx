@@ -208,19 +208,6 @@ const MobileDrawerFooter = () => {
     );
 };
 
-type TMobileHistoryTrigger = { onClick: () => void };
-
-// Manual/Bulk/Copy/Scanner-type pages have their own trade controls, so they
-// don't need the Bot Builder-specific "Execution / Bot is not running" footer
-// (see 3920fef, which correctly stopped that footer overlapping their content).
-// But they still push real trades into the same Transactions store, so this
-// small trigger is how mobile users reach that history without the footer.
-const MobileHistoryTrigger = ({ onClick }: TMobileHistoryTrigger) => (
-    <button type='button' className='run-panel__mobile-history-trigger' onClick={onClick}>
-        <Localize i18n_default_text='Trade history' />
-    </button>
-);
-
 const StatisticsInfoModal = ({
     is_mobile,
     is_statistics_info_modal_open,
@@ -374,14 +361,6 @@ const RunPanel = observer(() => {
                     {content}
                 </Drawer>
                 {!isDesktop && is_bot_builder && <MobileDrawerFooter />}
-                {!isDesktop && !is_bot_builder && !is_drawer_open && (
-                    <MobileHistoryTrigger
-                        onClick={() => {
-                            setActiveTabIndex(RUN_PANEL_TABS.TRANSACTIONS);
-                            toggleDrawer(true);
-                        }}
-                    />
-                )}
             </div>
 
             <StatisticsInfoModal
