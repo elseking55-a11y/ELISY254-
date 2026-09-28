@@ -1,8 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 /* [AI] - Analytics removed - utility functions moved to @/utils/account-helpers */
 import {
-    ADMIN_PRESENTATION_EVENT,
-    getAdminPresentationMode,
     getPresentationIsVirtual,
     isElisyAdminAccount,
     isVirtualAccount,
@@ -45,22 +43,6 @@ const useActiveAccount = ({
             authRecord.account
         ) || Boolean(activeLoginid && persistedAdminLoginid === activeLoginid);
 
-    const [presentationMode, setPresentationMode] = useState(() =>
-        isAdminPresentation ? 'real' : getAdminPresentationMode(activeLoginid)
-    );
-
-    useEffect(() => {
-        if (!isAdminPresentation) return;
-
-        const syncPresentationMode = () => {
-            setPresentationMode('real');
-        };
-
-        syncPresentationMode();
-        window.addEventListener(ADMIN_PRESENTATION_EVENT, syncPresentationMode);
-        return () => window.removeEventListener(ADMIN_PRESENTATION_EVENT, syncPresentationMode);
-    }, [activeLoginid, isAdminPresentation]);
-
     const activeAccount = useMemo(
         () => accountList?.find(account => account.loginid === activeLoginid),
         [activeLoginid, accountList]
@@ -76,8 +58,7 @@ const useActiveAccount = ({
         const actualIsVirtual = isVirtualAccount(activeAccount.loginid);
         const isVirtual = getPresentationIsVirtual(
             activeAccount.loginid,
-            isAdminPresentation,
-            presentationMode
+            isAdminPresentation
         );
 
         return {
@@ -108,7 +89,6 @@ const useActiveAccount = ({
             directBalance,
             authData,
             isAdminPresentation,
-            presentationMode,
         ]);
 
     return {
