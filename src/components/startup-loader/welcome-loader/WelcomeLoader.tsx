@@ -11,10 +11,10 @@ interface WelcomeLoaderProps {
 }
 
 const BOOT_MESSAGES = [
-    'Initializing D-Bot...',
-    'Connecting to trading services...',
-    'Loading market data...',
-    'Preparing your dashboard...',
+    'Starting ELISY254...',
+    'Connecting to Deriv...',
+    'Loading trading tools...',
+    'Preparing ELISY254...',
     'Almost ready...',
 ];
 
@@ -86,7 +86,7 @@ export const WelcomeLoader: React.FC<WelcomeLoaderProps> = ({
 
             <div className='welcome-loader__card'>
                 <h1 className='welcome-loader__title'>{config.siteName}</h1>
-                <p className='welcome-loader__subtitle'>{config.siteName} Trading Workspace</p>
+                <p className='welcome-loader__subtitle'>ELISY254 Trading Workspace</p>
 
                 <div className='welcome-loader__dots' aria-hidden='true'>
                     <span className='welcome-loader__dot' />
@@ -101,7 +101,7 @@ export const WelcomeLoader: React.FC<WelcomeLoaderProps> = ({
                         <div className='welcome-loader__progress-fill' style={{ width: `${progress}%` }} />
                     </div>
                     <div className='welcome-loader__progress-meta'>
-                        <span>Boot sequence</span>
+                        <span>ELISY254</span>
                         <span>{Math.round(progress)}%</span>
                     </div>
                 </div>
