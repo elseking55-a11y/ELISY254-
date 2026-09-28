@@ -876,6 +876,60 @@ $account-balance-green: #0b6b37;
         overflow-y: auto;
     }
 
+    &__presentation {
+        align-items: center;
+        display: flex;
+        gap: 0.8rem;
+        justify-content: space-between;
+        padding: 0.9rem 1rem;
+        background: var(--general-main-1);
+        border-bottom: 1px solid var(--general-section-1);
+    }
+
+    &__presentation-label {
+        color: var(--text-prominent);
+        display: flex;
+        flex-direction: column;
+        font-size: 1.2rem;
+        font-weight: 700;
+        line-height: 1.25;
+
+        span {
+            color: var(--text-less-prominent);
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-top: 0.2rem;
+        }
+    }
+
+    &__presentation-toggle {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.3rem;
+        padding: 0.25rem;
+        border-radius: 0.6rem;
+        background: var(--general-main-2);
+        border: 1px solid var(--general-section-1);
+        min-width: 12rem;
+    }
+
+    &__presentation-button {
+        border: 0;
+        border-radius: 0.45rem;
+        background: transparent;
+        color: var(--text-general);
+        cursor: pointer;
+        font-size: 1.1rem;
+        font-weight: 700;
+        min-height: 2.9rem;
+        padding: 0 0.8rem;
+
+        &--active {
+            background: var(--state-active);
+            color: var(--text-prominent);
+        }
+    }
+
     &__tabs {
         display: grid;
         grid-template-columns: 1fr 1fr;
