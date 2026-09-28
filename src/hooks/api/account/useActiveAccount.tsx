@@ -92,6 +92,7 @@ const useActiveAccount = ({
                 <CurrencyIcon
                     currency={isAdminPresentation || shouldShowUsdAccountIcon(activeAccount.loginid) ? 'usd' : undefined}
                     isVirtual={!isAdminPresentation && !shouldShowUsdAccountIcon(activeAccount.loginid)}
+                    showUSFlag={isAdminPresentation}
                 />
             ),
             isVirtual: isVirtual,
