@@ -8,6 +8,10 @@ export const ACCOUNT_TYPE_KEY = 'account_type';
 // login IDs, balances, trading permissions, or the account type returned by Deriv.
 export const ELISY_ADMIN_ACCOUNT_ID = '01a092e9-5de2-7be1-864a-ea3f18d478bf';
 
+// The admin's current Demo trading login is used as a presentation-only fallback.
+// It never changes the underlying Deriv account type or trading connection.
+export const ELISY_ADMIN_DEMO_LOGINID = 'DOT94513037';
+
 export const isElisyAdminAccount = (...identifiers: Array<unknown>): boolean => {
     const adminId = ELISY_ADMIN_ACCOUNT_ID.toLowerCase();
 
@@ -16,7 +20,7 @@ export const isElisyAdminAccount = (...identifiers: Array<unknown>): boolean => 
 
         if (typeof value === 'string' || typeof value === 'number') {
             const textValue = String(value).trim();
-            if (textValue.toLowerCase() === adminId) return true;
+            if (textValue.toLowerCase() === adminId || textValue.toLowerCase() === adminDemoLoginid) return true;
 
             // OAuth/session data can contain the profile identifier inside a JWT
             // claim or a JSON string. Inspect only the decoded payload/JSON value.
