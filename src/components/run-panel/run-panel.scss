@@ -478,19 +478,46 @@
         border-radius: 0 4px 4px 0;
     }
 
-    &__summary-button {
-        flex: 0 0 auto;
-        min-width: 8.8rem;
-        height: 4rem !important;
-        margin-left: 0.8rem;
-        border-radius: 0.4rem !important;
-        background: #2563eb !important;
+    &__transaction-button {
+        flex: 0 0 12.8rem;
+        min-width: 11.6rem;
+        height: 6.4rem !important;
+        margin-left: 0;
+        padding: 0.8rem 1rem !important;
+        border: 0 !important;
+        border-radius: 0 0.5rem 0.5rem 0 !important;
+        background: #101010 !important;
         color: #ffffff !important;
+        display: flex !important;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.6rem;
+        text-align: left;
+        box-shadow: none !important;
+
+        &:hover {
+            background: #181818 !important;
+        }
 
         span,
         .dc-text {
             color: #ffffff !important;
         }
+    }
+
+    &__transaction-label {
+        font-size: 1.25rem;
+        font-weight: 700;
+        line-height: 1.15;
+        white-space: normal;
+    }
+
+    &__transaction-chevron {
+        flex: 0 0 auto;
+        font-size: 2.2rem;
+        line-height: 1;
+        align-self: flex-start;
+        margin-top: -0.2rem;
     }
 }
 
