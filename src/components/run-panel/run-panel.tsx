@@ -359,7 +359,7 @@ const RunPanel = observer(() => {
                 >
                     {content}
                 </Drawer>
-                {!isDesktop && is_bot_builder && <MobileDrawerFooter />}
+                {!isDesktop && active_tab !== UP_AND_DOWN && <MobileDrawerFooter />}
             </div>
 
             <StatisticsInfoModal
