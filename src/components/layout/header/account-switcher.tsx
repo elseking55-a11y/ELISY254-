@@ -410,7 +410,7 @@ const AccountSwitcher = observer(({ activeAccount }: TAccountSwitcher) => {
                                 aria-expanded={expandedGroups.real}
                                 onClick={() => handleGroupToggle('real')}
                             >
-                                <span>{isAdminPresentation ? 'Presented as Real' : 'Deriv accounts'}</span>
+                                <span>{isAdminPresentation ? 'Real account' : 'Deriv accounts'}</span>
                                 <span
                                     className={classNames('acc-dropdown__group-chevron', {
                                         'acc-dropdown__group-chevron--collapsed': !expandedGroups.real,
@@ -473,7 +473,7 @@ const AccountSwitcher = observer(({ activeAccount }: TAccountSwitcher) => {
                                 aria-expanded={expandedGroups.demo}
                                 onClick={() => handleGroupToggle('demo')}
                             >
-                                <span>{isAdminPresentation ? 'Presented as Demo' : 'Demo accounts'}</span>
+                                <span>{isAdminPresentation ? 'Demo account' : 'Demo accounts'}</span>
                                 <span
                                     className={classNames('acc-dropdown__group-chevron', {
                                         'acc-dropdown__group-chevron--collapsed': !expandedGroups.demo,
