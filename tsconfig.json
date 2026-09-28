@@ -19,7 +19,7 @@
         "allowJs": true,
         "paths": {
             "@/*": ["./src/*"],
-            "@deriv-com/translations": ["../node_modules/@deriv-com/translations/dist/src/index.d.ts"]
+            "@deriv-com/translations": ["./node_modules/@deriv-com/translations/dist/index.d.ts"]
         },
         "esModuleInterop": true,
         "types": ["jest", "@testing-library/jest-dom"]
