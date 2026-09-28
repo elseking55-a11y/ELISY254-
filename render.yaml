@@ -2,7 +2,6 @@ services:
   - type: web
     name: elisy254-backend
     runtime: node
-    runtimeVersion: 20
     plan: free
     rootDir: backend
     buildCommand: npm install
@@ -11,6 +10,8 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
+      - key: NODE_VERSION
+        value: 20.19.5
       - key: PORT
         value: 10000
       - key: CORS_ORIGIN
