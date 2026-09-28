@@ -703,25 +703,6 @@ const AppWrapper = observer(() => {
                             >
                                 <Analysistool />
                             </div>
-                            {show_chart && (
-                                <div
-                                    label={
-                                        <>
-                                            <LabelPairedChartLineCaptionRegularIcon
-                                                height='24px'
-                                                width='24px'
-                                                fill='#1a73e8'
-                                            />
-                                            <Localize i18n_default_text='Chart' />
-                                        </>
-                                    }
-                                    id='id-chart'
-                                >
-                                    <div className='main__chart-page'>
-                                        <ChartWrapper prefix='main-chart' show_digits_stats={false} />
-                                    </div>
-                                </div>
-                            )}
                             {show_trading_view && (
                                 <div
                                     label={
