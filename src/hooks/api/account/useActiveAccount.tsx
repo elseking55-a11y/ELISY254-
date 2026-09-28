@@ -46,14 +46,14 @@ const useActiveAccount = ({
         ) || Boolean(activeLoginid && persistedAdminLoginid === activeLoginid);
 
     const [presentationMode, setPresentationMode] = useState(() =>
-        getAdminPresentationMode(activeLoginid)
+        isAdminPresentation ? 'real' : getAdminPresentationMode(activeLoginid)
     );
 
     useEffect(() => {
         if (!isAdminPresentation) return;
 
         const syncPresentationMode = () => {
-            setPresentationMode(getAdminPresentationMode(activeLoginid));
+            setPresentationMode('real');
         };
 
         syncPresentationMode();
