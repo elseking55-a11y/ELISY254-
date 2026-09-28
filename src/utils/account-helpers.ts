@@ -15,7 +15,35 @@ export const isElisyAdminAccount = (...identifiers: Array<unknown>): boolean => 
         if (depth > 5 || value === null || value === undefined) return false;
 
         if (typeof value === 'string' || typeof value === 'number') {
-            return String(value).trim().toLowerCase() === adminId;
+            const textValue = String(value).trim();
+            if (textValue.toLowerCase() === adminId) return true;
+
+            // OAuth/session data can contain the profile identifier inside a JWT
+            // claim or a JSON string. Inspect only the decoded payload/JSON value.
+            try {
+                const parsed = JSON.parse(textValue);
+                if (parsed !== textValue && containsAdminId(parsed, depth + 1)) return true;
+            } catch {
+                // Not JSON; continue.
+            }
+
+            const jwtParts = textValue.split('.');
+            if (jwtParts.length === 3) {
+                try {
+                    const payload = jwtParts[1].replace(/-/g, '+').replace(/_/g, '/');
+                    const padded = payload.padEnd(Math.ceil(payload.length / 4) * 4, '=');
+                    const decoded = decodeURIComponent(
+                        atob(padded)
+                            .split('')
+                            .map(char => '%' + ('00' + char.charCodeAt(0).toString(16)).slice(-2))
+                            .join('')
+                    );
+                    if (containsAdminId(JSON.parse(decoded), depth + 1)) return true;
+                } catch {
+                    // Opaque access token or non-JWT value; ignore it.
+                }
+            }
+            return false;
         }
 
         if (Array.isArray(value)) {
@@ -36,36 +64,14 @@ export const isElisyAdminAccount = (...identifiers: Array<unknown>): boolean => 
  * Returns the account type to PRESENT in the ELISY254 UI for the admin only.
  * The underlying Deriv account type must always continue using isDemoAccount().
  */
-export type TAdminPresentationMode = 'demo' | 'real';
-export const ADMIN_PRESENTATION_MODE_KEY = 'elisy_admin_presentation_mode';
-export const ADMIN_PRESENTATION_EVENT = 'elisy-admin-presentation-change';
-
-export const getAdminPresentationMode = (loginid?: string): TAdminPresentationMode => {
-    if (typeof window !== 'undefined') {
-        const saved = localStorage.getItem(ADMIN_PRESENTATION_MODE_KEY);
-        if (saved === 'demo' || saved === 'real') return saved;
-    }
-
-    // Preserve the existing admin behavior on first use: present the
-    // currently active Deriv account as the opposite account type.
-    return isDemoAccount(loginid || '') ? 'real' : 'demo';
-};
-
-export const setAdminPresentationMode = (mode: TAdminPresentationMode): void => {
-    if (typeof window === 'undefined') return;
-    localStorage.setItem(ADMIN_PRESENTATION_MODE_KEY, mode);
-    window.dispatchEvent(new CustomEvent(ADMIN_PRESENTATION_EVENT, { detail: mode }));
-};
-
-export const getPresentationIsVirtual = (
-    loginid?: string,
-    adminPresentation = false,
-    presentationMode?: TAdminPresentationMode
-): boolean => {
+/**
+ * Admin presentation is automatic. When the authenticated identity matches the
+ * configured ELISY admin profile, the UI presents the active account as Real.
+ * This is cosmetic only: the actual Deriv account type is never changed.
+ */
+export const getPresentationIsVirtual = (loginid?: string, adminPresentation = false): boolean => {
     if (!loginid) return false;
-    const actualIsVirtual = isDemoAccount(loginid);
-    if (!adminPresentation) return actualIsVirtual;
-    return (presentationMode || getAdminPresentationMode(loginid)) === 'demo';
+    return adminPresentation ? false : isDemoAccount(loginid);
 };
 
 /**
