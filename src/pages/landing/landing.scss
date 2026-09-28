@@ -222,12 +222,19 @@
     }
 
     &__feature-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+        display: flex;
         gap: 18px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        padding: 4px 2px 14px;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
     }
 
     &__feature-card {
+        flex: 0 0 min(300px, 82vw);
+        scroll-snap-align: start;
         background: var(--panel);
         border: 1px solid var(--panel-border);
         border-radius: 18px;
@@ -341,14 +348,24 @@
     }
 
     &__steps-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-        gap: 32px;
+        display: flex;
+        gap: 18px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        padding: 4px 2px 14px;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
     }
 
     &__step {
         position: relative;
-        padding-top: 4px;
+        flex: 0 0 min(320px, 82vw);
+        scroll-snap-align: start;
+        padding: 22px;
+        background: var(--panel);
+        border: 1px solid var(--panel-border);
+        border-radius: 18px;
     }
 
     &__step-number {
@@ -421,5 +438,20 @@
     }
     to {
         transform: translateX(-50%);
+    }
+}
+
+
+@media (max-width: 700px) {
+    .landing__features,
+    .landing__steps {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+
+    .landing__feature-grid,
+    .landing__steps-grid {
+        margin-right: -16px;
+        padding-right: 16px;
     }
 }
