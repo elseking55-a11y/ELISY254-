@@ -4,6 +4,23 @@
 export const MAX_MOBILE_WIDTH = 926;
 export const ACCOUNT_TYPE_KEY = 'account_type';
 
+// Cosmetic admin presentation account. This does NOT change Deriv account data,
+// login IDs, balances, trading permissions, or the account type returned by Deriv.
+export const ELISY_ADMIN_ACCOUNT_ID = '01a092e9-5de2-7be1-864a-ea3f18d478bf';
+
+export const isElisyAdminAccount = (loginid?: string): boolean =>
+    Boolean(loginid) && loginid === ELISY_ADMIN_ACCOUNT_ID;
+
+/**
+ * Returns the account type to PRESENT in the ELISY254 UI for the admin only.
+ * The underlying Deriv account type must always continue using isDemoAccount().
+ */
+export const getPresentationIsVirtual = (loginid?: string): boolean => {
+    if (!loginid) return false;
+    const actualIsVirtual = isDemoAccount(loginid);
+    return isElisyAdminAccount(loginid) ? !actualIsVirtual : actualIsVirtual;
+};
+
 /**
  * Check if a loginid represents a demo account
  * Demo accounts have specific prefixes:
