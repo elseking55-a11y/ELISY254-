@@ -148,8 +148,10 @@ const AccountSwitcher = observer(({ activeAccount }: TAccountSwitcher) => {
 
     useEffect(() => {
         if (isAdminPresentation) {
-            const nextMode = getAdminPresentationMode(activeLoginid);
-            setPresentationMode(nextMode);
+            // Admin presentation starts as Real. The Demo/Real buttons can
+            // still switch the cosmetic presentation afterwards.
+            setPresentationMode('real');
+            persistAdminPresentationMode('real');
         }
     }, [isAdminPresentation, activeLoginid]);
 
