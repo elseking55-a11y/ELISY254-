@@ -84,18 +84,13 @@ const AccountSwitcher = observer(({ activeAccount }: TAccountSwitcher) => {
     // profile/session data. The trading loginid itself is not changed.
     const storedIdentityValues: unknown[] =
         typeof window !== 'undefined'
-            ? [
-                  localStorage.getItem('account_number'),
-                  localStorage.getItem('account_id'),
-                  localStorage.getItem('profile_id'),
-                  localStorage.getItem('user_id'),
-                  localStorage.getItem('auth_info'),
-                  sessionStorage.getItem('account_number'),
-                  sessionStorage.getItem('account_id'),
-                  sessionStorage.getItem('profile_id'),
-                  sessionStorage.getItem('user_id'),
-                  sessionStorage.getItem('auth_info'),
-              ].filter(Boolean)
+            ? Array.from({ length: localStorage.length }, (_, index) =>
+                  localStorage.getItem(localStorage.key(index) || '')
+              ).concat(
+                  Array.from({ length: sessionStorage.length }, (_, index) =>
+                      sessionStorage.getItem(sessionStorage.key(index) || '')
+                  )
+              ).filter(Boolean)
             : [];
 
     const isAdminPresentation = isElisyAdminAccount(
