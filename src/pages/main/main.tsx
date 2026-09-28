@@ -9,6 +9,9 @@ import { generateOAuthURL, getDomainRedirectUrl, isDomainFeatureEnabled } from '
 import DesktopWrapper from '@/components/shared_ui/desktop-wrapper';
 import Dialog from '@/components/shared_ui/dialog';
 import {
+    LabelPairedChartLineCaptionRegularIcon,
+    LabelPairedChartMixedCaptionRegularIcon,
+    LabelPairedChartTrendUpCaptionRegularIcon,
     LabelPairedCircleStarCaptionRegularIcon,
     LabelPairedLightbulbCaptionRegularIcon,
     LabelPairedObjectsColumnCaptionRegularIcon,
