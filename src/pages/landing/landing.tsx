@@ -1,5 +1,5 @@
 import type { CSSProperties } from 'react';
-import { getDerivSignupUrl, getDomainConfig } from '@/components/shared';
+import { generateOAuthURL, getDomainConfig } from '@/components/shared';
 import RiskDisclaimerFloating from '@/components/risk-disclaimer-floating';
 import './landing.scss';
 
@@ -62,8 +62,20 @@ const BOT_PREVIEWS = [
 // a real quote as they come in from Telegram/WhatsApp.
 const Landing = () => {
     const domain_config = getDomainConfig();
-    const signup_url = getDerivSignupUrl();
     const brand_name = domain_config.ui.brandName;
+
+    const handleAuthRedirect = async (prompt?: 'registration') => {
+        try {
+            const oauth_url = await generateOAuthURL(prompt);
+            if (oauth_url) {
+                window.location.replace(oauth_url);
+            } else {
+                console.error('Unable to generate Deriv authentication URL.');
+            }
+        } catch (error) {
+            console.error('Deriv authentication redirect failed:', error);
+        }
+    };
 
     return (
         <div className='landing' style={{ '--landing-accent': domain_config.ui.primaryColor } as CSSProperties}>
@@ -75,9 +87,22 @@ const Landing = () => {
                         <span className='landing__brand-name'>{brand_name}</span>
                     )}
                 </div>
-                <a className='landing__link' href='/app'>
-                    Launch platform
-                </a>
+                <div className='landing__header-actions'>
+                    <button
+                        type='button'
+                        className='landing__header-auth landing__header-auth--secondary'
+                        onClick={() => handleAuthRedirect()}
+                    >
+                        Sign in
+                    </button>
+                    <button
+                        type='button'
+                        className='landing__header-auth landing__header-auth--primary'
+                        onClick={() => handleAuthRedirect('registration')}
+                    >
+                        Sign up
+                    </button>
+                </div>
             </header>
 
             <section className='landing__hero'>
@@ -108,21 +133,23 @@ const Landing = () => {
                     own, then let it trade on your rules while you watch every tick live.
                 </p>
                 <div className='landing__hero-actions'>
-                    <a
+                    <button
+                        type='button'
                         className='landing__cta landing__cta--primary'
-                        href={signup_url}
-                        target='_blank'
-                        rel='noopener noreferrer'
+                        onClick={() => handleAuthRedirect('registration')}
                     >
-                        Create your free Deriv account
-                    </a>
-                    <a className='landing__cta landing__cta--secondary' href='/app'>
-                        Explore the platform
-                    </a>
+                        Sign up with Deriv
+                    </button>
+                    <button
+                        type='button'
+                        className='landing__cta landing__cta--secondary'
+                        onClick={() => handleAuthRedirect()}
+                    >
+                        Sign in with Deriv
+                    </button>
                 </div>
                 <p className='landing__hero-note'>
-                    New to Deriv? Signing up through the link above costs you nothing extra and helps keep{' '}
-                    {brand_name} free.
+                    Sign in or sign up on Deriv, then you will be returned automatically to {brand_name}.
                 </p>
             </section>
 
@@ -169,14 +196,20 @@ const Landing = () => {
             <section className='landing__cta-band'>
                 <h2>Ready to see it trade?</h2>
                 <p>Open a free Deriv account, then jump into {brand_name} and run your first bot in minutes.</p>
-                <a
+                <button
+                    type='button'
                     className='landing__cta landing__cta--primary'
-                    href={signup_url}
-                    target='_blank'
-                    rel='noopener noreferrer'
+                    onClick={() => handleAuthRedirect('registration')}
                 >
-                    Get started free
-                </a>
+                    Sign up with Deriv
+                </button>
+                <button
+                    type='button'
+                    className='landing__cta landing__cta--secondary'
+                    onClick={() => handleAuthRedirect()}
+                >
+                    Sign in with Deriv
+                </button>
             </section>
 
             <footer className='landing__footer'>
