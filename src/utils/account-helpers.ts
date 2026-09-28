@@ -8,17 +8,17 @@ export const ACCOUNT_TYPE_KEY = 'account_type';
 // login IDs, balances, trading permissions, or the account type returned by Deriv.
 export const ELISY_ADMIN_ACCOUNT_ID = '01a092e9-5de2-7be1-864a-ea3f18d478bf';
 
-export const isElisyAdminAccount = (loginid?: string): boolean =>
-    Boolean(loginid) && loginid === ELISY_ADMIN_ACCOUNT_ID;
+export const isElisyAdminAccount = (...identifiers: Array<string | null | undefined>): boolean =>
+    identifiers.some(value => String(value ?? '').trim() === ELISY_ADMIN_ACCOUNT_ID);
 
 /**
  * Returns the account type to PRESENT in the ELISY254 UI for the admin only.
  * The underlying Deriv account type must always continue using isDemoAccount().
  */
-export const getPresentationIsVirtual = (loginid?: string): boolean => {
+export const getPresentationIsVirtual = (loginid?: string, adminPresentation = false): boolean => {
     if (!loginid) return false;
     const actualIsVirtual = isDemoAccount(loginid);
-    return isElisyAdminAccount(loginid) ? !actualIsVirtual : actualIsVirtual;
+    return adminPresentation ? !actualIsVirtual : actualIsVirtual;
 };
 
 /**
