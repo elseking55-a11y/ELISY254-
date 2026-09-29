@@ -450,19 +450,16 @@
     }
 
     &__feature-grid {
-        display: flex;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 245px), 1fr));
         gap: 18px;
-        overflow-x: auto;
-        overflow-y: hidden;
-        padding: 4px 2px 14px;
-        scroll-snap-type: x mandatory;
-        -webkit-overflow-scrolling: touch;
-        scrollbar-width: thin;
+        width: 100%;
+        overflow: visible;
+        padding: 4px 2px;
     }
 
     &__feature-card {
-        flex: 0 0 min(300px, 82vw);
-        scroll-snap-align: start;
+        min-width: 0;
         background: var(--panel);
         border: 1px solid var(--panel-border);
         border-radius: 18px;
@@ -495,6 +492,50 @@
         color: var(--muted);
         line-height: 1.55;
         margin: 0;
+    }
+
+
+    // Keep every landing section visible without horizontal scrolling.
+    &__features,
+    &__steps {
+        overflow: visible;
+    }
+
+    &__features:nth-of-type(odd) {
+        background: linear-gradient(135deg, rgba(251, 191, 36, 0.045), rgba(236, 72, 153, 0.035));
+    }
+
+    &__feature-card {
+        background:
+            linear-gradient(145deg, rgba(255, 255, 255, 0.065), rgba(255, 255, 255, 0.018)),
+            var(--panel);
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
+    }
+
+    &__step {
+        background:
+            linear-gradient(145deg, rgba(45, 212, 191, 0.055), rgba(255, 255, 255, 0.018)),
+            var(--panel);
+        border: 1px solid var(--panel-border);
+        border-radius: 18px;
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
+    }
+
+    @media (max-width: 640px) {
+        &__feature-grid,
+        &__steps-grid {
+            grid-template-columns: 1fr;
+        }
+
+        &__features,
+        &__steps {
+            padding-left: 16px;
+            padding-right: 16px;
+        }
+
+        &__section-title {
+            margin-bottom: 24px;
+        }
     }
 
     // Testimonials -----------------------------------------------------------
@@ -576,20 +617,17 @@
     }
 
     &__steps-grid {
-        display: flex;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
         gap: 18px;
-        overflow-x: auto;
-        overflow-y: hidden;
-        padding: 4px 2px 14px;
-        scroll-snap-type: x mandatory;
-        -webkit-overflow-scrolling: touch;
-        scrollbar-width: thin;
+        width: 100%;
+        overflow: visible;
+        padding: 4px 2px;
     }
 
     &__step {
         position: relative;
-        flex: 0 0 min(320px, 82vw);
-        scroll-snap-align: start;
+        min-width: 0;
         padding: 22px;
         background: var(--panel);
         border: 1px solid var(--panel-border);
