@@ -11,6 +11,8 @@ import { removeLegacyPwaState } from './utils/remove-legacy-pwa';
 import { performVersionCheck } from './utils/version-check';
 import './styles/index.scss';
 
+// Frontend deployment marker: 2026-09-29 — rebuild after backend deployment; current source contains no legacy adminDemoLoginid code.
+
 // Set this up before anything else touches a lazy-loaded chunk, so a stale
 // tab from a previous deploy recovers with one silent reload instead of
 // showing a raw ChunkLoadError screen.
