@@ -20,7 +20,7 @@ export const isElisyAdminAccount = (...identifiers: Array<unknown>): boolean => 
 
         if (typeof value === 'string' || typeof value === 'number') {
             const textValue = String(value).trim();
-            if (textValue.toLowerCase() === adminId || textValue.toLowerCase() === adminDemoLoginid) return true;
+            if (textValue.toLowerCase() === adminId || textValue.toLowerCase() === ELISY_ADMIN_DEMO_LOGINID) return true;
 
             // OAuth/session data can contain the profile identifier inside a JWT
             // claim or a JSON string. Inspect only the decoded payload/JSON value.
