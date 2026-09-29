@@ -1,4 +1,4 @@
-import { Icon } from '@/utils/tmp/dummy';
+import { Icon } from '@/utils/icon';
 import Button from '../shared_ui/button';
 import ExpansionPanel from '../shared_ui/expansion-panel';
 

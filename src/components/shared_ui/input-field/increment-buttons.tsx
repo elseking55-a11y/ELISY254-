@@ -1,6 +1,6 @@
 import React from 'react';
 import classNames from 'classnames';
-import { Icon } from '@/utils/tmp/dummy';
+import { Icon } from '@/utils/icon';
 import Button from '../button';
 
 export type TButtonType = 'button' | 'submit' | 'reset';
