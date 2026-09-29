@@ -28,6 +28,19 @@ const FEATURES = [
     },
 ];
 
+const TODAY_FEATURES = [
+    { tag: 'BOT BUILDER', title: 'Bot Builder', description: 'Build and edit Deriv strategies visually with the block workspace.' },
+    { tag: 'FREE BOTS', title: 'Free Bots', description: 'Browse available ready-made strategies and load them into the builder.' },
+    { tag: 'MANUAL', title: 'Manual Trading', description: 'Use the trading interface directly with your connected Deriv account.' },
+    { tag: 'ANALYSIS', title: 'Analysis Tools', description: 'Study market movement, ticks and strategy conditions before trading.' },
+    { tag: 'CHARTS', title: 'Chart', description: 'View market charts and follow price movement in the trading workspace.' },
+    { tag: 'DTRADER', title: 'DTrader', description: 'Access the Deriv trading interface alongside the ELISY254 workspace.' },
+    { tag: 'BULK', title: 'Bulk Trading', description: 'Manage multiple trading actions from one dedicated workspace.' },
+    { tag: 'APEX', title: 'Apex Bot', description: 'Explore the Apex Bot workspace when it is enabled for your account.' },
+    { tag: 'MARKET', title: 'Market Hacker', description: 'Use the Market Hacker tools to inspect available market conditions.' },
+    { tag: 'AI', title: 'AI Hub', description: 'Access the AI-powered strategy workspace when enabled.' },
+];
+
 const STEPS = [
     {
         step: '01',
@@ -195,6 +208,15 @@ const Landing = () => {
                 </div>
             </section>
 
+            <section className='landing__splash' aria-live='polite'>
+                <div className='landing__splash-card' key={splashIndex}>
+                    <span className='landing__splash-eyebrow'>{LANDING_SPLASHES[splashIndex].eyebrow}</span>
+                    <h2>{LANDING_SPLASHES[splashIndex].title}</h2>
+                    <p>{LANDING_SPLASHES[splashIndex].message}</p>
+                    <div className='landing__splash-shine' />
+                </div>
+            </section>
+
             <section className='landing__hero'>
                 <div className='landing__trust-row'>
                     {TRUST_BADGES.map(badge => (
@@ -275,6 +297,20 @@ const Landing = () => {
                 </div>
             </section>
 
+
+            <section className='landing__features'>
+                <span className='landing__eyebrow'>ELISY254 tools</span>
+                <h2 className='landing__section-title'>All the tools added to the platform</h2>
+                <div className='landing__feature-grid'>
+                    {TODAY_FEATURES.map(feature => (
+                        <div className='landing__feature-card' key={feature.title}>
+                            <span className='landing__feature-tag'>{feature.tag}</span>
+                            <h3 className='landing__feature-title'>{feature.title}</h3>
+                            <p className='landing__feature-description'>{feature.description}</p>
+                        </div>
+                    ))}
+                </div>
+            </section>
 
             <section className='landing__features'>
                 <span className='landing__eyebrow'>Platform</span>
