@@ -14,13 +14,14 @@ export const ELISY_ADMIN_DEMO_LOGINID = 'DOT94513037';
 
 export const isElisyAdminAccount = (...identifiers: Array<unknown>): boolean => {
     const adminId = ELISY_ADMIN_ACCOUNT_ID.toLowerCase();
+    const adminDemoLoginId = ELISY_ADMIN_DEMO_LOGINID.toLowerCase();
 
     const containsAdminId = (value: unknown, depth = 0): boolean => {
         if (depth > 5 || value === null || value === undefined) return false;
 
         if (typeof value === 'string' || typeof value === 'number') {
             const textValue = String(value).trim();
-            if (textValue.toLowerCase() === adminId || textValue.toLowerCase() === ELISY_ADMIN_DEMO_LOGINID) return true;
+            if (textValue.toLowerCase() === adminId || textValue.toLowerCase() === adminDemoLoginId) return true;
 
             // OAuth/session data can contain the profile identifier inside a JWT
             // claim or a JSON string. Inspect only the decoded payload/JSON value.

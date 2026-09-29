@@ -141,16 +141,7 @@ const Landing = () => {
             setMessageIndex(current => (current + 1) % LANDING_MESSAGES.length);
             setSplashIndex(current => (current + 1) % LANDING_SPLASHES.length);
         }, 5000);
-        return (
-        <section className='landing__splash' aria-live='polite'>
-                <div className='landing__splash-card' key={splashIndex}>
-                    <span className='landing__splash-eyebrow'>{LANDING_SPLASHES[splashIndex].eyebrow}</span>
-                    <h2>{LANDING_SPLASHES[splashIndex].title}</h2>
-                    <p>{LANDING_SPLASHES[splashIndex].message}</p>
-                    <div className='landing__splash-shine' />
-                </div>
-            </section>
-            ) => window.clearInterval(timer);
+        return () => window.clearInterval(timer);
     }, []);
 
     const handleAuthRedirect = async (prompt?: 'registration') => {
@@ -285,6 +276,7 @@ const Landing = () => {
             </section>
 
 
+            <section className='landing__features'>
                 <span className='landing__eyebrow'>Platform</span>
                 <h2 className='landing__section-title'>Everything you need, built in</h2>
                 <div className='landing__feature-grid'>
