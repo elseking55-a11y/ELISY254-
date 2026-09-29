@@ -60,12 +60,24 @@ const BOT_PREVIEWS = [
 // Landing-page messages are intentionally editable in one place.
 // They are presented as community-style inspiration, not verified performance claims.
 const LANDING_MESSAGES = [
-    { name: 'AMOSE', message: 'The website is more interesting every day — I like how quickly I can move from an idea to a strategy.' },
-    { name: 'EUGEN', message: 'The day I started learning with this bot, I finally began paying attention to my rules instead of chasing every tick.' },
-    { name: 'TRADER', message: 'Small strategy, clear rules, patient execution. Keep learning and let the process do the talking.' },
-    { name: 'ELISY254', message: 'Build it. Test it. Understand every block. Then trade only what you understand.' },
-    { name: 'COMMUNITY', message: 'New day, new setup, new lesson. Stay disciplined and keep your risk under control.' },
-    { name: 'TRADER', message: 'A good trading day starts with a plan — not with a promise of profit.' },
+    { name: 'AMOSE', message: 'Congratulations ELISY254 — the new bot features make the platform more interesting and easier to explore.' },
+    { name: 'EUGEN', message: 'I really like the Bot Builder. The blocks make it easier to understand a strategy before running it.' },
+    { name: 'BRIAN', message: 'Big congratulations on the Free Bots library. Loading a strategy and studying the blocks is a great feature.' },
+    { name: 'MERCY', message: 'The landing page looks beautiful. The colours, cards and smooth experience make the platform feel fresh.' },
+    { name: 'KEVIN', message: 'The new trading tools are impressive. I like having different features in one place instead of jumping between pages.' },
+    { name: 'JANE', message: 'Congratulations on the latest update. The strategy-building experience is becoming much easier to follow.' },
+    { name: 'COLLINS', message: 'The bot cards are clean and easy to understand. This makes finding a strategy much faster.' },
+    { name: 'FAITH', message: 'I love the way the features are organised. Bot Builder, Free Bots and the trading tools are easy to discover.' },
+    { name: 'SAM', message: 'The new updates are looking sharp. Keep improving the tools and adding useful strategy features.' },
+    { name: 'MARTIN', message: 'Congratulations to the ELISY254 team. The platform has a strong collection of tools for learning and testing strategies.' },
+    { name: 'RACHEL', message: 'The mobile experience is much nicer. I can explore the bot features comfortably from my phone.' },
+    { name: 'DAN', message: 'The strategy tools are getting better with every update. Congratulations on the progress.' },
+    { name: 'PETER', message: 'I like that I can build a strategy visually instead of starting with complicated code.' },
+    { name: 'GRACE', message: 'The new presentation is premium. The colours and cards give the landing page a completely different feel.' },
+    { name: 'JOEL', message: 'Congratulations on the latest bot updates. Keep making the tools simple enough for new traders to learn.' },
+    { name: 'NANCY', message: 'The combination of Free Bots, Bot Builder and analysis tools gives the platform a lot to explore.' },
+    { name: 'ALEX', message: 'Great work on the new features. I especially like being able to inspect a strategy before deciding how to use it.' },
+    { name: 'ELISY TRADER', message: 'Another strong update. Build carefully, test your strategy and keep learning.' },
 ];
 
 // Interim testimonial copy — appreciation-toned, no specific profit/return
