@@ -57,12 +57,59 @@ const BOT_PREVIEWS = [
     'Matches/Differs Scanner',
 ];
 
+// Landing-page messages are intentionally editable in one place.
+// They are presented as community-style inspiration, not verified performance claims.
+const LANDING_MESSAGES = [
+    { name: 'AMOSE', message: 'The website is more interesting every day — I like how quickly I can move from an idea to a strategy.' },
+    { name: 'EUGEN', message: 'The day I started learning with this bot, I finally began paying attention to my rules instead of chasing every tick.' },
+    { name: 'TRADER', message: 'Small strategy, clear rules, patient execution. Keep learning and let the process do the talking.' },
+    { name: 'ELISY254', message: 'Build it. Test it. Understand every block. Then trade only what you understand.' },
+    { name: 'COMMUNITY', message: 'New day, new setup, new lesson. Stay disciplined and keep your risk under control.' },
+    { name: 'TRADER', message: 'A good trading day starts with a plan — not with a promise of profit.' },
+];
+
 // Interim testimonial copy — appreciation-toned, no specific profit/return
 // claims (kept vague on purpose for compliance reasons). Swap each entry for
 // a real quote as they come in from Telegram/WhatsApp.
 const Landing = () => {
     const domain_config = getDomainConfig();
     const brand_name = domain_config.ui.brandName;
+
+    const getTimeGreeting = () => {
+        const hour = new Date().getHours();
+
+        if (hour >= 5 && hour < 12) {
+            return {
+                title: 'Good morning, trader ☀️',
+                message: 'Welcome to a fresh trading day. Build your plan, test your strategy, and trade by your rules.',
+                label: 'MORNING SESSION',
+            };
+        }
+
+        if (hour >= 12 && hour < 17) {
+            return {
+                title: 'Good afternoon, trader 🌤️',
+                message: 'Keep your setup clear and your decisions disciplined. Let the strategy guide the trade.',
+                label: 'AFTERNOON SESSION',
+            };
+        }
+
+        if (hour >= 17 && hour < 22) {
+            return {
+                title: 'Good evening, trader 🌆',
+                message: 'Review the market, learn from the day, and prepare your next strategy with a clear head.',
+                label: 'EVENING SESSION',
+            };
+        }
+
+        return {
+            title: 'Good night, trader 🌙',
+            message: 'If you are still studying the market, keep it simple. Tomorrow brings another session to learn from.',
+            label: 'NIGHT SESSION',
+        };
+    };
+
+    const timeGreeting = getTimeGreeting();
 
     const handleAuthRedirect = async (prompt?: 'registration') => {
         try {
@@ -104,6 +151,16 @@ const Landing = () => {
                     </button>
                 </div>
             </header>
+
+            <section className='landing__welcome' aria-label='Daily trader welcome'>
+                <div className='landing__welcome-glow' aria-hidden='true' />
+                <div className='landing__welcome-content'>
+                    <span className='landing__welcome-label'>{timeGreeting.label}</span>
+                    <h2>{timeGreeting.title}</h2>
+                    <p>{timeGreeting.message}</p>
+                    <span className='landing__welcome-note'>{brand_name} • Learn • Build • Test • Trade</span>
+                </div>
+            </section>
 
             <section className='landing__hero'>
                 <div className='landing__trust-row'>
@@ -162,6 +219,27 @@ const Landing = () => {
                     ))}
                 </div>
             </div>
+
+            <section className='landing__messages' aria-label='Trader messages'>
+                <div className='landing__messages-heading'>
+                    <span className='landing__eyebrow'>Trader voices</span>
+                    <h2 className='landing__section-title'>Fresh thoughts from the trading community</h2>
+                </div>
+                <div className='landing__messages-window'>
+                    <div className='landing__messages-track'>
+                        {[...LANDING_MESSAGES, ...LANDING_MESSAGES].map((item, i) => (
+                            <article className='landing__message-card' key={`${item.name}-${i}`}>
+                                <div className='landing__message-topline'>
+                                    <span className='landing__message-dot' />
+                                    <span>{item.name}</span>
+                                </div>
+                                <p>“{item.message}”</p>
+                                <span className='landing__message-caption'>Community inspiration</span>
+                            </article>
+                        ))}
+                    </div>
+                </div>
+            </section>
 
             <section className='landing__features'>
                 <span className='landing__eyebrow'>Platform</span>
