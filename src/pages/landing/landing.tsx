@@ -80,6 +80,17 @@ const LANDING_MESSAGES = [
     { name: 'ELISY TRADER', message: 'Another strong update. Build carefully, test your strategy and keep learning.' },
 ];
 
+const LANDING_SPLASHES = [
+    { eyebrow: '☀️ MORNING TRADER', title: 'Good morning, trader', message: 'Start the day with a clear plan, disciplined risk and a strategy you understand.' },
+    { eyebrow: '🌤️ AFTERNOON TRADER', title: 'Keep your focus', message: 'Review your setup, stay patient and let your rules guide every decision.' },
+    { eyebrow: '🌆 EVENING TRADER', title: 'Review the day', message: 'Study what worked, learn from what did not and prepare for tomorrow.' },
+    { eyebrow: '🌙 NIGHT TRADER', title: 'Keep learning', message: 'A strong trading routine is built one lesson, one test and one improvement at a time.' },
+    { eyebrow: '🤖 BOT BUILDER', title: 'Build your strategy', message: 'Create strategies visually and understand the logic behind every block.' },
+    { eyebrow: '🆓 FREE BOTS', title: 'Explore ready strategies', message: 'Browse the available bots, load a strategy and study how it is built.' },
+    { eyebrow: '📊 ANALYSIS TOOLS', title: 'Study the market', message: 'Use your analysis tools to understand movement before making a trading decision.' },
+    { eyebrow: '💎 PREMIUM FEATURES', title: 'More tools. More possibilities.', message: 'Explore ELISY254 features designed to keep your trading workspace connected.' },
+];
+
 // Interim testimonial copy — appreciation-toned, no specific profit/return
 // claims (kept vague on purpose for compliance reasons). Swap each entry for
 // a real quote as they come in from Telegram/WhatsApp.
@@ -123,12 +134,23 @@ const Landing = () => {
 
     const timeGreeting = getTimeGreeting();
     const [messageIndex, setMessageIndex] = useState(0);
+    const [splashIndex, setSplashIndex] = useState(0);
 
     useEffect(() => {
         const timer = window.setInterval(() => {
             setMessageIndex(current => (current + 1) % LANDING_MESSAGES.length);
+            setSplashIndex(current => (current + 1) % LANDING_SPLASHES.length);
         }, 5000);
-        return () => window.clearInterval(timer);
+        return (
+        <section className='landing__splash' aria-live='polite'>
+                <div className='landing__splash-card' key={splashIndex}>
+                    <span className='landing__splash-eyebrow'>{LANDING_SPLASHES[splashIndex].eyebrow}</span>
+                    <h2>{LANDING_SPLASHES[splashIndex].title}</h2>
+                    <p>{LANDING_SPLASHES[splashIndex].message}</p>
+                    <div className='landing__splash-shine' />
+                </div>
+            </section>
+            ) => window.clearInterval(timer);
     }, []);
 
     const handleAuthRedirect = async (prompt?: 'registration') => {
