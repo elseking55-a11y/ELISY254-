@@ -67,7 +67,17 @@ app.use('/api/exchange-rates', require('./routes/exchange-rates'));
 // Serve static frontend in production (dist/ built by `npm run build`)
 const distPath = path.join(__dirname, '../../dist');
 if (IS_PRODUCTION && fs.existsSync(distPath)) {
-    app.use(express.static(distPath));
+    app.use(
+        express.static(distPath, {
+            setHeaders(res, filePath) {
+                if (path.basename(filePath) === 'index.html') {
+                    res.setHeader('Cache-Control', 'no-store, max-age=0, must-revalidate');
+                } else {
+                    res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+                }
+            },
+        })
+    );
 
     // SPA fallback — serve index.html for any non-API route
     app.get('*', (req, res) => {
