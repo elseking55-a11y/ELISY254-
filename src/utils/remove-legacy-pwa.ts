@@ -12,9 +12,8 @@ export const removeLegacyPwaState = () => {
             .then(registrations => {
                 registrations.forEach(registration => {
                     const scriptUrl = registration.active?.scriptURL || registration.installing?.scriptURL || '';
-                    // Keep the current intentional PWA registration; only remove
-                    // anything left over from a different/older service worker.
-                    if (scriptUrl.endsWith('/sw.js')) return;
+                    // Remove all service workers so old cached application shells cannot
+                    // survive a frontend deployment.
                     registration.unregister();
                 });
             })
