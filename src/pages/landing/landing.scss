@@ -154,27 +154,34 @@
 
     &__messages-window {
         width: 100%;
+        display: flex;
+        justify-content: center;
         overflow: hidden;
-        padding: 4px 0 18px;
-        mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent);
-        -webkit-mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent);
+        padding: 4px 24px 14px;
     }
 
-    &__messages-track {
+    &__message-card--active {
+        animation: landing-message-fade 0.55s ease both;
+    }
+
+    &__message-progress {
         display: flex;
-        width: max-content;
-        gap: 20px;
-        animation: landing-messages-scroll 38s linear infinite;
+        justify-content: center;
+        gap: 7px;
+        margin-top: 4px;
 
-        &:hover {
-            animation-play-state: paused;
-        }
+        span {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.18);
+            transition: transform 0.25s ease, background 0.25s ease;
 
-        @media (prefers-reduced-motion: reduce) {
-            animation: none;
-            overflow-x: auto;
-            width: 100%;
-            padding: 0 24px;
+            &.is-active {
+                background: var(--gold);
+                transform: scale(1.35);
+                box-shadow: 0 0 12px rgba(251, 191, 36, 0.45);
+            }
         }
     }
 
@@ -596,12 +603,14 @@
     }
 }
 
-@keyframes landing-messages-scroll {
+@keyframes landing-message-fade {
     from {
-        transform: translateX(-18%);
+        opacity: 0;
+        transform: translateY(10px) scale(0.985);
     }
     to {
-        transform: translateX(0);
+        opacity: 1;
+        transform: translateY(0) scale(1);
     }
 }
 
