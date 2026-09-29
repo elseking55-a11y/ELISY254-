@@ -1,4 +1,4 @@
-import type { CSSProperties } from 'react';
+import { useEffect, useState, type CSSProperties } from 'react';
 import { generateOAuthURL, getDomainConfig } from '@/components/shared';
 import RiskDisclaimerFloating from '@/components/risk-disclaimer-floating';
 import './landing.scss';
@@ -110,6 +110,14 @@ const Landing = () => {
     };
 
     const timeGreeting = getTimeGreeting();
+    const [messageIndex, setMessageIndex] = useState(0);
+
+    useEffect(() => {
+        const timer = window.setInterval(() => {
+            setMessageIndex(current => (current + 1) % LANDING_MESSAGES.length);
+        }, 5000);
+        return () => window.clearInterval(timer);
+    }, []);
 
     const handleAuthRedirect = async (prompt?: 'registration') => {
         try {
@@ -226,22 +234,23 @@ const Landing = () => {
                     <h2 className='landing__section-title'>Fresh thoughts from the trading community</h2>
                 </div>
                 <div className='landing__messages-window'>
-                    <div className='landing__messages-track'>
-                        {[...LANDING_MESSAGES, ...LANDING_MESSAGES].map((item, i) => (
-                            <article className='landing__message-card' key={`${item.name}-${i}`}>
-                                <div className='landing__message-topline'>
-                                    <span className='landing__message-dot' />
-                                    <span>{item.name}</span>
-                                </div>
-                                <p>“{item.message}”</p>
-                                <span className='landing__message-caption'>Community inspiration</span>
-                            </article>
-                        ))}
-                    </div>
+                    <article className='landing__message-card landing__message-card--active' key={LANDING_MESSAGES[messageIndex].name}>
+                        <div className='landing__message-topline'>
+                            <span className='landing__message-dot' />
+                            <span>{LANDING_MESSAGES[messageIndex].name}</span>
+                        </div>
+                        <p>“{LANDING_MESSAGES[messageIndex].message}”</p>
+                        <span className='landing__message-caption'>Community inspiration</span>
+                    </article>
+                </div>
+                <div className='landing__message-progress' aria-hidden='true'>
+                    {LANDING_MESSAGES.map((item, index) => (
+                        <span key={item.name + index} className={index === messageIndex ? 'is-active' : ''} />
+                    ))}
                 </div>
             </section>
 
-            <section className='landing__features'>
+
                 <span className='landing__eyebrow'>Platform</span>
                 <h2 className='landing__section-title'>Everything you need, built in</h2>
                 <div className='landing__feature-grid'>
