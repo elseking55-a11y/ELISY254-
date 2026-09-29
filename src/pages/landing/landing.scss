@@ -143,7 +143,64 @@
     }
 
     // Large premium community message marquee --------------------------------
-    &__messages {
+    &__splash {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 8px 20px 22px;
+}
+
+&__splash-card {
+    position: relative;
+    overflow: hidden;
+    width: min(900px, 100%);
+    padding: 30px 34px;
+    border: 1px solid rgba(251, 191, 36, 0.45);
+    border-radius: 26px;
+    background:
+        linear-gradient(120deg, rgba(251, 191, 36, 0.20), rgba(229, 231, 235, 0.14) 42%, rgba(15, 23, 42, 0.96) 78%),
+        #0f172a;
+    box-shadow: 0 0 28px rgba(251, 191, 36, 0.22), 0 0 55px rgba(229, 231, 235, 0.10);
+    animation: landing-splash-in 0.6s ease both;
+}
+
+&__splash-eyebrow {
+    display: block;
+    margin-bottom: 9px;
+    color: var(--gold);
+    font-size: 0.76rem;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+}
+
+&__splash-card h2 {
+    margin: 0;
+    color: #fff;
+    font-size: clamp(1.45rem, 4vw, 2.35rem);
+    font-weight: 900;
+}
+
+&__splash-card p {
+    position: relative;
+    z-index: 1;
+    max-width: 760px;
+    margin: 10px 0 0;
+    color: rgba(255, 255, 255, 0.82);
+    font-size: clamp(0.95rem, 2vw, 1.08rem);
+    line-height: 1.65;
+}
+
+&__splash-shine {
+    position: absolute;
+    inset: -80% auto -80% -30%;
+    width: 28%;
+    transform: rotate(22deg);
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.38), transparent);
+    animation: landing-premium-shine 3.2s linear infinite;
+    pointer-events: none;
+}
+
+&__messages {
         padding: clamp(54px, 8vw, 88px) 0;
         overflow: hidden;
     }
@@ -601,6 +658,16 @@
             line-height: 1.6;
         }
     }
+}
+
+@keyframes landing-splash-in {
+    from { opacity: 0; transform: translateY(12px) scale(0.985); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes landing-premium-shine {
+    from { transform: translateX(-180%) rotate(22deg); }
+    to { transform: translateX(700%) rotate(22deg); }
 }
 
 @keyframes landing-message-fade {
