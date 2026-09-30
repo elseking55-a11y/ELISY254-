@@ -2997,397 +2997,49 @@ const AutoTrades = observer(() => {
                                 </p>
                             </div>
 
-                            {/* Settings card */}
-                            <div className='auto-trades-card'>
-                                <h2 className='auto-trades-card__title'>Settings</h2>
-
-                                <div className='auto-trades-config__group'>
-                                    <div className='auto-trades-strategy-selector'>
-                                        <label>Strategy template</label>
-                                        <select
-                                            className='auto-trades-strategy-selector__select'
-                                            value={strategyTemplate}
-                                            onChange={e => setStrategyTemplate(e.target.value as StrategyTemplate)}
-                                            disabled={isRunning}
-                                        >
-                                            <option value='STANDARD'>Standard builder</option>
-                                            <option value='OVER_2_MARKET'>Over 2 Market</option>
-                                            <option value='UNDER_7_MARKET'>Under 7 Market</option>
-                                        </select>
+                            <div className='auto-trades-premium'>
+                                <div className='auto-trades-premium__header'>
+                                    <div>
+                                        <span className='auto-trades-premium__eyebrow'>PREMIUM AUTO TRADE</span>
+                                        <h2>Live Deriv execution</h2>
                                     </div>
-                                    <p className='auto-trades-inverse__hint'>
-                                        {usingSpecialStrategy
-                                            ? 'Scans every volatility and 1s market in the background. When one qualifies, load that market and click Start Trading to wait for the entry and buy automatically.'
-                                            : 'Use the standard contract builder to configure your own auto-trade rule.'}
-                                    </p>
-                                </div>
-
-                                {/* Contract Type + Barrier + Streak */}
-                                <div className='auto-trades-config__group'>
-                                    <p className='auto-trades-config__group-label'>Contract Type</p>
-
-                                    {/* Trade type row */}
-                                    <div className='auto-trades-config__trade-row'>
-                                        <div className='auto-trades-config__field auto-trades-config__field--type'>
-                                            <label>Type</label>
-                                            <select
-                                                className='auto-trades-config__select'
-                                                value={tradeType}
-                                                onChange={e => handleTradeTypeChange(e.target.value as TradeType)}
-                                                disabled={isRunning || usingSpecialStrategy}
-                                            >
-                                                <optgroup label='Digits'>
-                                                    <option value='DIGITOVER'>Digit Over</option>
-                                                    <option value='DIGITUNDER'>Digit Under</option>
-                                                    <option value='DIGITEVEN'>Digit Even</option>
-                                                    <option value='DIGITODD'>Digit Odd</option>
-                                                    <option value='DIGITMATCH'>Matches</option>
-                                                    <option value='DIGITDIFF'>Differs</option>
-                                                </optgroup>
-                                                <optgroup label='Direction'>
-                                                    <option value='CALL'>Rise</option>
-                                                    <option value='PUT'>Fall</option>
-                                                    <option value='RUNHIGH'>Only Ups</option>
-                                                    <option value='RUNLOW'>Only Downs</option>
-                                                </optgroup>
-                                            </select>
-                                        </div>
-
-                                        {/* Prediction — adaptive digit selector (Win→Before / Loss→After) */}
-                                        {usesLossPrediction(tradeType) && (
-                                            <div className='auto-trades-config__prediction-pair'>
-                                                <div className='auto-trades-config__prediction-label'>
-                                                    Prediction
-                                                    <span className='auto-trades-config__prediction-hint'>
-                                                        W→digit / L→digit
-                                                    </span>
-                                                </div>
-                                                <div className='auto-trades-config__prediction-controls'>
-                                                    <div className='auto-trades-config__prediction-item'>
-                                                        <span className='auto-trades-config__prediction-tag auto-trades-config__prediction-tag--win'>
-                                                            W
-                                                        </span>
-                                                        <select
-                                                            className='auto-trades-config__select auto-trades-config__select--compact'
-                                                            value={predictionBeforeLoss}
-                                                            onChange={e => setPredictionBeforeLoss(e.target.value)}
-                                                            disabled={isRunning || usingSpecialStrategy}
-                                                            title='Prediction used after a Win'
-                                                        >
-                                                            {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map(d => (
-                                                                <option key={d} value={String(d)}>
-                                                                    {d}
-                                                                </option>
-                                                            ))}
-                                                        </select>
-                                                    </div>
-                                                    <span className='auto-trades-config__prediction-divider'>|</span>
-                                                    <div className='auto-trades-config__prediction-item'>
-                                                        <span className='auto-trades-config__prediction-tag auto-trades-config__prediction-tag--loss'>
-                                                            L
-                                                        </span>
-                                                        <select
-                                                            className='auto-trades-config__select auto-trades-config__select--compact'
-                                                            value={predictionAfterLoss}
-                                                            onChange={e => setPredictionAfterLoss(e.target.value)}
-                                                            disabled={isRunning || usingSpecialStrategy}
-                                                            title='Prediction used after a Loss'
-                                                        >
-                                                            {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map(d => (
-                                                                <option key={d} value={String(d)}>
-                                                                    {d}
-                                                                </option>
-                                                            ))}
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        )}
-
-                                        {BARRIER_NEEDED[tradeType] && !usesLossPrediction(tradeType) && (
-                                            <div className='auto-trades-config__field auto-trades-config__field--narrow'>
-                                                <label>
-                                                    {tradeType === 'DIGITMATCH' || tradeType === 'DIGITDIFF'
-                                                        ? 'Prediction'
-                                                        : 'Digit'}
-                                                </label>
-                                                <select
-                                                    className='auto-trades-config__select'
-                                                    value={barrier}
-                                                    onChange={e => setBarrier(e.target.value)}
-                                                    disabled={isRunning || usingSpecialStrategy}
-                                                >
-                                                    {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map(d => (
-                                                        <option key={d} value={String(d)}>
-                                                            {d}
-                                                        </option>
-                                                    ))}
-                                                </select>
-                                            </div>
-                                        )}
-
-                                        <div className='auto-trades-config__field auto-trades-config__field--analysis'>
-                                            <label>Analysis ticks</label>
-                                            <select
-                                                className='auto-trades-config__select'
-                                                value={analysisTicks}
-                                                onChange={e => setAnalysisTicks(e.target.value)}
-                                                disabled={isRunning || usingSpecialStrategy}
-                                            >
-                                                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(d => (
-                                                    <option key={d} value={String(d)}>
-                                                        {d}
-                                                    </option>
-                                                ))}
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    {/* Streak length */}
-                                    <div className='auto-trades-config__field' style={{ marginTop: '0.8rem' }}>
-                                        <label>
-                                            Streak (
-                                            {isDirection ? getDirectionStreakLabel(tradeType) : 'matching digits'})
-                                        </label>
-                                        <div className='auto-trades-config__streak-row'>
-                                            <input
-                                                className='auto-trades-config__streak-slider'
-                                                type='range'
-                                                min='1'
-                                                max='10'
-                                                step='1'
-                                                value={streak}
-                                                onChange={e => setStreak(e.target.value)}
-                                                disabled={isRunning || usingSpecialStrategy}
-                                            />
-                                            <span className='auto-trades-config__streak-value'>{streak}</span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* Strategy Mode Selector */}
-                                <div className='auto-trades-config__group'>
-                                    <div className='auto-trades-strategy-selector'>
-                                        <label>Strategy Mode</label>
-                                        <select
-                                            className='auto-trades-strategy-selector__select'
-                                            value={strategyMode}
-                                            onChange={e => setStrategyMode(e.target.value as StrategyMode)}
-                                            disabled={isRunning || usingSpecialStrategy}
-                                        >
-                                            <option value='STANDARD'>Standard</option>
-                                            <option value='INVERSE'>Inverse</option>
-                                            <option value='PERCENTAGE'>Percentage Mode</option>
-                                        </select>
-                                    </div>
-                                    <p className='auto-trades-inverse__hint'>
-                                        {strategyMode === 'PERCENTAGE'
-                                            ? 'Auto-loads the latest 1,000 ticks and keeps a live rolling percentage window'
-                                            : strategyMode === 'INVERSE'
-                                              ? 'Detects opposite signals, executes contracts'
-                                              : 'Detects standard signals, executes contracts'}
-                                    </p>
-                                </div>
-
-                                {/* Inverse Toggle for Standard/Inverse modes */}
-                                {strategyMode !== 'PERCENTAGE' && !usingSpecialStrategy && (
-                                    <div className='auto-trades-config__group'>
-                                        <button
-                                            type='button'
-                                            className={classNames(
-                                                'auto-trades-strategy-btn',
-                                                inverseMode && 'auto-trades-strategy-btn--active'
-                                            )}
-                                            onClick={() => setInverseMode(prev => !prev)}
-                                            disabled={isRunning || usingSpecialStrategy}
-                                        >
-                                            <span className='auto-trades-strategy-btn__badge'>
-                                                {inverseMode ? 'Inverse' : 'Direct'}
-                                            </span>
-                                            <span className='auto-trades-strategy-btn__label'>Signal Mode</span>
-                                            <span
-                                                className={classNames(
-                                                    'auto-trades-inverse__toggle-switch',
-                                                    'auto-trades-strategy-btn__switch'
-                                                )}
-                                            >
-                                                <span className='auto-trades-inverse__toggle-knob' />
-                                            </span>
-                                        </button>
-                                    </div>
-                                )}
-
-                                {/* Percentage Mode Configuration */}
-                                {strategyMode === 'PERCENTAGE' && (
-                                    <div className='auto-trades-config__group percentage-mode-config'>
-                                        <div className='auto-trades-config__field'>
-                                            <label>Trade Type</label>
-                                            <select
-                                                className='auto-trades-config__select'
-                                                value={tradeType}
-                                                onChange={e => setTradeType(e.target.value as TradeType)}
-                                                disabled={isRunning}
-                                            >
-                                                <option value='DIGITOVER'>Digit Over</option>
-                                                <option value='DIGITUNDER'>Digit Under</option>
-                                                <option value='DIGITEVEN'>Digit Even/Odd</option>
-                                                <option value='DIGITMATCH'>Digit Match/Differs</option>
-                                                <option value='CALL'>Rise/Fall</option>
-                                                <option value='RUNHIGH'>Higher/Lower</option>
-                                            </select>
-                                        </div>
-                                        <div className='auto-trades-config__field'>
-                                            <label>Confidence Threshold: 80%</label>
-                                            <input
-                                                type='range'
-                                                className='auto-trades-config__slider'
-                                                min='50'
-                                                max='95'
-                                                step='1'
-                                                value={80}
-                                                onChange={() => {}}
-                                                disabled={isRunning}
-                                            />
-                                        </div>
-                                    </div>
-                                )}
-
-                                {/* Money settings */}
-                                <div className='auto-trades-config'>
-                                    <div className='auto-trades-config__field'>
-                                        <label>Stake ({currency || 'USD'})</label>
-                                        <Input
-                                            type='number'
-                                            min='0.35'
-                                            step='0.01'
-                                            value={stake}
-                                            onChange={e => setStake(e.target.value)}
-                                            disabled={isRunning}
-                                        />
-                                    </div>
-                                    <div className='auto-trades-config__field'>
-                                        <label>Martingale ×</label>
-                                        <Input
-                                            type='number'
-                                            min='1.01'
-                                            step='0.5'
-                                            value={martingale}
-                                            onChange={e => setMartingale(e.target.value)}
-                                            disabled={isRunning}
-                                        />
-                                    </div>
-                                    <div className='auto-trades-config__field'>
-                                        <label>Take Profit ({currency || 'USD'})</label>
-                                        <Input
-                                            type='number'
-                                            min='0'
-                                            step='1'
-                                            value={takeProfit}
-                                            onChange={e => setTakeProfit(e.target.value)}
-                                            disabled={isRunning}
-                                        />
-                                    </div>
-                                    <div className='auto-trades-config__field'>
-                                        <label>Stop Loss ({currency || 'USD'})</label>
-                                        <Input
-                                            type='number'
-                                            min='0'
-                                            step='1'
-                                            value={stopLoss}
-                                            onChange={e => setStopLoss(e.target.value)}
-                                            disabled={isRunning}
-                                        />
-                                    </div>
-                                </div>
-
-                                {/* Martingale Strategy Selector */}
-                                <div className='auto-trades-config__group'>
-                                    <div className='auto-trades-martingale-selector'>
-                                        <label>Martingale Strategy</label>
-                                        <select
-                                            className='auto-trades-martingale-selector__select'
-                                            value={martingaleMode}
-                                            onChange={e => setMartingaleMode(normalizeMartingaleMode(e.target.value))}
-                                            disabled={isRunning}
-                                        >
-                                            <option value='no_martingale'>No Martingale</option>
-                                            <option value='after_one_loss'>After 1 loss</option>
-                                            <option value='after_two_losses'>After 2 losses</option>
-                                            <option value='custom_consecutive_loss_trigger'>Custom loss count</option>
-                                        </select>
-                                    </div>
-                                    <p className='auto-trades-martingale__hint'>
-                                        {martingaleMode === 'no_martingale'
-                                            ? 'Martingale is disabled. Stake stays at the base amount.'
-                                            : martingaleMode === 'after_one_loss'
-                                              ? 'Martingale engages immediately after one loss.'
-                                              : martingaleMode === 'after_two_losses'
-                                                ? 'Martingale engages only after two consecutive losses.'
-                                                : `Martingale engages after ${clampConsecutiveLossThreshold(
-                                                      consecutiveLossCount
-                                                  )} consecutive losses.`}
-                                    </p>
-                                    {martingaleMode === 'custom_consecutive_loss_trigger' && (
-                                        <div
-                                            className='auto-trades-config__field auto-trades-config__field--martingale-threshold'
-                                            style={{ marginTop: '0.5rem' }}
-                                        >
-                                            <label>Consecutive losses before martingale</label>
-                                            <Input
-                                                type='number'
-                                                min='1'
-                                                max='10'
-                                                step='1'
-                                                value={consecutiveLossCountInput}
-                                                inputMode='numeric'
-                                                onChange={e =>
-                                                    handleConsecutiveLossCountInputChange(
-                                                        (e.target as HTMLInputElement).value
-                                                    )
-                                                }
-                                                onBlur={commitConsecutiveLossCountInput}
-                                                disabled={isRunning}
-                                            />
-                                        </div>
-                                    )}
-                                </div>
-
-                                <div className='auto-trades-controls'>
                                     <button
-                                        className={classNames('auto-trades-controls__ai', {
-                                            'auto-trades-controls__ai--dragging': isAiFabDragging,
-                                        })}
-                                        onClick={handleAiFabClick}
-                                        onPointerDown={handleAiFabPointerDown}
-                                        onPointerMove={handleAiFabPointerMove}
-                                        onPointerUp={finishAiFabDrag}
-                                        onPointerCancel={finishAiFabDrag}
-                                        disabled={isRunning}
                                         type='button'
-                                        title='AI strategy setup'
-                                        style={aiFabStyle}
+                                        className={classNames('auto-trades-premium__toggle', {
+                                            'auto-trades-premium__toggle--on': premiumAutoTrade,
+                                        })}
+                                        onClick={() => setPremiumAutoTrade(current => !current)}
+                                        aria-pressed={premiumAutoTrade}
                                     >
-                                        <span className='auto-trades-controls__ai-orbit'>
-                                            <span className='auto-trades-controls__ai-text'>AI</span>
-                                            <span className='auto-trades-controls__ai-dot' />
-                                        </span>
-                                        <span className='auto-trades-controls__ai-label'>Ai</span>
+                                        <span>AUTO TRADE</span>
+                                        <strong>{premiumAutoTrade ? 'ON' : 'OFF'}</strong>
                                     </button>
-                                    {!isRunning ? (
-                                        <button
-                                            className='auto-trades-controls__run'
-                                            onClick={handleRun}
-                                            disabled={!client.is_logged_in || selectedMarketSymbols.length === 0}
-                                        >
-                                            ▶ Start Trading
-                                        </button>
-                                    ) : (
-                                        <button className='auto-trades-controls__stop' onClick={handleStop}>
-                                            ■ Stop Trading
-                                        </button>
-                                    )}
                                 </div>
+                                <div className='auto-trades-premium__pipeline'>
+                                    {['LIVE DERIV TICKS','ANALYSIS ENGINE','PREDICTION / SIGNAL','RISK CHECK','DERIV PROPOSAL','BUY CONTRACT','MONITOR CONTRACT','WIN / LOSS','TRADE HISTORY'].map((step,index) => (
+                                        <div className='auto-trades-premium__pipeline-step' key={step}>
+                                            <span>{step}</span>{index < 8 && <b>↓</b>}
+                                        </div>
+                                    ))}
+                                </div>
+                                <div className='auto-trades-premium__settings'>
+                                    <label><span>Market</span><select value={selectedMarketSymbols[0] || AUTO_MARKET_SYMBOLS[0]} onChange={e => setSelectedMarketSymbols([e.target.value])} disabled={isRunning}>
+                                        {AUTO_MARKETS.map(market => <option key={market.symbol} value={market.symbol}>{market.label}</option>)}
+                                    </select></label>
+                                    <label><span>Contract</span><select value={tradeType} onChange={e => handleTradeTypeChange(e.target.value as TradeType)} disabled={isRunning}>
+                                        <option value='DIGITEVEN'>Even</option><option value='DIGITODD'>Odd</option><option value='DIGITOVER'>Over</option><option value='DIGITUNDER'>Under</option><option value='DIGITMATCH'>Match</option><option value='DIGITDIFF'>Differs</option><option value='CALL'>Rise</option><option value='PUT'>Fall</option>
+                                    </select></label>
+                                    <label><span>Stake ({currency || 'USD'})</span><Input type='number' min='0.35' step='0.01' value={stake} onChange={e => setStake(e.target.value)} disabled={isRunning}/></label>
+                                    <label><span>Max trades</span><Input type='number' min='1' max='1000' step='1' value={maxTradesSession} onChange={e => setMaxTradesSession(e.target.value)} disabled={isRunning}/></label>
+                                    <label><span>Max loss/session ({currency || 'USD'})</span><Input type='number' min='0.01' step='0.01' value={maxLossSession} onChange={e => setMaxLossSession(e.target.value)} disabled={isRunning}/></label>
+                                    <label><span>Stop after consecutive losses</span><Input type='number' min='1' max='10' step='1' value={consecutiveLossCountInput} onChange={e => handleConsecutiveLossCountInputChange((e.target as HTMLInputElement).value)} onBlur={commitConsecutiveLossCountInput} disabled={isRunning}/></label>
+                                    <label><span>Signal threshold</span><div className='auto-trades-premium__range'><input type='range' min='1' max='100' value={signalThreshold} onChange={e => setSignalThreshold(e.target.value)} disabled={isRunning}/><strong>{signalThreshold}%</strong></div></label>
+                                </div>
+                                <p className='auto-trades-premium__status'>
+                                    {premiumAutoTrade ? 'LIVE MODE: qualifying signals can reach the real Deriv proposal and buy flow after the risk checks pass.' : 'AUTO TRADE OFF: live ticks and analysis continue, but this execution gate will not buy contracts.'}
+                                </p>
                             </div>
+
                         </div>
 
                         {/* Markets grid */}
