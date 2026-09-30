@@ -1115,6 +1115,10 @@ const AutoTrades = observer(() => {
         [selectedMarketSymbols]
     );
 
+    const [premiumAutoTrade, setPremiumAutoTrade] = useState(false);
+    const [maxTradesSession, setMaxTradesSession] = useState(() => loadSavedNum('maxTradesSession', '10', 1, 1000));
+    const [maxLossSession, setMaxLossSession] = useState(() => loadSavedNum('maxLossSession', '10', 0.01, 1000000));
+    const [signalThreshold, setSignalThreshold] = useState(() => loadSavedNum('signalThreshold', '70', 1, 100));
     const [totalPnl, setTotalPnl] = useState(0);
     const [totalTrades, setTotalTrades] = useState(0);
     const [error, setError] = useState<string | null>(null);
@@ -1251,6 +1255,10 @@ const AutoTrades = observer(() => {
     const predictionAfterLossRef = useRef(5);
     const streakRef = useRef(4);
     const analysisTicksRef = useRef(1);
+    const premiumAutoTradeRef = useRef(false);
+    const maxTradesSessionRef = useRef(10);
+    const maxLossSessionRef = useRef(10);
+    const signalThresholdRef = useRef(70);
     const globalTradingRef = useRef(false);
     const nextStakeRef = useRef(1);
     const consecutiveLossRef = useRef(0);
@@ -1369,6 +1377,18 @@ const AutoTrades = observer(() => {
     }, [isRunning]);
 
     useEffect(() => {
+        premiumAutoTradeRef.current = premiumAutoTrade;
+        maxTradesSessionRef.current = Math.max(1, Number(maxTradesSession) || 10);
+        maxLossSessionRef.current = Math.max(0.01, Number(maxLossSession) || 10);
+        signalThresholdRef.current = Math.min(100, Math.max(1, Number(signalThreshold) || 70));
+        try {
+            localStorage.setItem('auto_trades_maxTradesSession', maxTradesSession);
+            localStorage.setItem('auto_trades_maxLossSession', maxLossSession);
+            localStorage.setItem('auto_trades_signalThreshold', signalThreshold);
+        } catch {
+            // Ignore localStorage write failures.
+        }
+
         configRef.current = {
             stake: Number(stake) || 1,
             martingale: Math.max(1.01, Number(martingale) || 2),
@@ -1385,7 +1405,7 @@ const AutoTrades = observer(() => {
         } catch {
             // Ignore localStorage write failures.
         }
-    }, [stake, martingale, takeProfit, stopLoss, martingaleMode, consecutiveLossCount]);
+    }, [stake, martingale, takeProfit, stopLoss, martingaleMode, consecutiveLossCount, premiumAutoTrade, maxTradesSession, maxLossSession, signalThreshold]);
 
     useEffect(() => {
         tradeTypeRef.current = tradeType;
@@ -1967,7 +1987,13 @@ const AutoTrades = observer(() => {
                 refreshDisplays();
             }
 
-            if ((totalPnlRef.current >= tp || totalPnlRef.current <= -sl) && runningRef.current) {
+            if (
+                (totalPnlRef.current >= tp ||
+                    totalPnlRef.current <= -sl ||
+                    totalPnlRef.current <= -maxLossSessionRef.current ||
+                    totalTradesRef.current >= maxTradesSessionRef.current) &&
+                runningRef.current
+            ) {
                 runningRef.current = false;
                 if (!unmountedRef.current) {
                     setIsRunning(false);
@@ -2011,10 +2037,14 @@ const AutoTrades = observer(() => {
         (symbol: string, state: MarketState, signalReady: boolean) => {
             if (
                 runningRef.current &&
+                premiumAutoTradeRef.current &&
                 signalReady &&
                 !state.trading &&
                 !globalTradingRef.current &&
-                state.lossCooldownLeft === 0
+                state.lossCooldownLeft === 0 &&
+                totalTradesRef.current < maxTradesSessionRef.current &&
+                totalPnlRef.current > -maxLossSessionRef.current &&
+                state.confidenceScore >= signalThresholdRef.current
             ) {
                 state.trading = true;
                 state.consecutive = 0;
@@ -2132,6 +2162,14 @@ const AutoTrades = observer(() => {
                 } else {
                     state.consecutive = 0;
                 }
+            }
+
+            // Update the same confidence value used by the premium signal threshold.
+            if (IS_DIRECTION_TYPE[ct]) {
+                state.confidenceScore = calculateDirectionPercentages(state.directionHistory).confidence;
+            } else {
+                state.digitPercentages = calculateDigitPercentages(state.lastDigits);
+                state.confidenceScore = calculateConfidence(state.digitPercentages);
             }
 
             const candleMatch = inverseModeRef.current
@@ -2916,6 +2954,49 @@ const AutoTrades = observer(() => {
                     >
                         {/* Sidebar */}
                         <div className='auto-trades-page__sidebar'>
+                            <div className='auto-trades-premium'>
+                                <div className='auto-trades-premium__header'>
+                                    <div>
+                                        <span className='auto-trades-premium__eyebrow'>PREMIUM AUTO TRADE</span>
+                                        <h2>Live Deriv execution</h2>
+                                    </div>
+                                    <button
+                                        type='button'
+                                        className={classNames('auto-trades-premium__toggle', {
+                                            'auto-trades-premium__toggle--on': premiumAutoTrade,
+                                        })}
+                                        onClick={() => setPremiumAutoTrade(current => !current)}
+                                        aria-pressed={premiumAutoTrade}
+                                    >
+                                        <span>AUTO TRADE</span>
+                                        <strong>{premiumAutoTrade ? 'ON' : 'OFF'}</strong>
+                                    </button>
+                                </div>
+                                <div className='auto-trades-premium__pipeline'>
+                                    {['LIVE DERIV TICKS','ANALYSIS ENGINE','PREDICTION / SIGNAL','RISK CHECK','DERIV PROPOSAL','BUY CONTRACT','MONITOR CONTRACT','WIN / LOSS','TRADE HISTORY'].map((step,index) => (
+                                        <div className='auto-trades-premium__pipeline-step' key={step}>
+                                            <span>{step}</span>{index < 8 && <b>↓</b>}
+                                        </div>
+                                    ))}
+                                </div>
+                                <div className='auto-trades-premium__settings'>
+                                    <label><span>Market</span><select value={selectedMarketSymbols[0] || AUTO_MARKET_SYMBOLS[0]} onChange={e => setSelectedMarketSymbols([e.target.value])} disabled={isRunning}>
+                                        {AUTO_MARKETS.map(market => <option key={market.symbol} value={market.symbol}>{market.label}</option>)}
+                                    </select></label>
+                                    <label><span>Contract</span><select value={tradeType} onChange={e => handleTradeTypeChange(e.target.value as TradeType)} disabled={isRunning}>
+                                        <option value='DIGITEVEN'>Even</option><option value='DIGITODD'>Odd</option><option value='DIGITOVER'>Over</option><option value='DIGITUNDER'>Under</option><option value='DIGITMATCH'>Match</option><option value='DIGITDIFF'>Differs</option><option value='CALL'>Rise</option><option value='PUT'>Fall</option>
+                                    </select></label>
+                                    <label><span>Stake ({currency || 'USD'})</span><Input type='number' min='0.35' step='0.01' value={stake} onChange={e => setStake(e.target.value)} disabled={isRunning}/></label>
+                                    <label><span>Max trades</span><Input type='number' min='1' max='1000' step='1' value={maxTradesSession} onChange={e => setMaxTradesSession(e.target.value)} disabled={isRunning}/></label>
+                                    <label><span>Max loss/session ({currency || 'USD'})</span><Input type='number' min='0.01' step='0.01' value={maxLossSession} onChange={e => setMaxLossSession(e.target.value)} disabled={isRunning}/></label>
+                                    <label><span>Stop after consecutive losses</span><Input type='number' min='1' max='10' step='1' value={consecutiveLossCountInput} onChange={e => handleConsecutiveLossCountInputChange((e.target as HTMLInputElement).value)} onBlur={commitConsecutiveLossCountInput} disabled={isRunning}/></label>
+                                    <label><span>Signal threshold</span><div className='auto-trades-premium__range'><input type='range' min='1' max='100' value={signalThreshold} onChange={e => setSignalThreshold(e.target.value)} disabled={isRunning}/><strong>{signalThreshold}%</strong></div></label>
+                                </div>
+                                <p className='auto-trades-premium__status'>
+                                    {premiumAutoTrade ? 'LIVE MODE: qualifying signals can reach the real Deriv proposal and buy flow after the risk checks pass.' : 'AUTO TRADE OFF: live ticks and analysis continue, but this execution gate will not buy contracts.'}
+                                </p>
+                            </div>
+
                             {/* Settings card */}
                             <div className='auto-trades-card'>
                                 <h2 className='auto-trades-card__title'>Settings</h2>
